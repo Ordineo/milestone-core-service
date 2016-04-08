@@ -1,0 +1,47 @@
+spring:
+  jackson:
+    serialization:
+      WRITE_CHAR_ARRAYS_AS_JSON_ARRAYS: false
+  data:
+    rest:
+      basePath: /api
+      defaultMediaType: application/hal+json
+      returnBodyOnUpdate: false
+      returnBodyOnCreate: false
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+logging:
+  level:
+    be.ordina: 'DEBUG'
+    org.hibernate: 'ERROR'
+---
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: https://eureka-ordineo.cfapps.io/eureka/ #http://localhost:8761/eureka/
+ribbon:
+  IsSecure: true
+---
+spring:
+  profiles: cloud
+server:
+  port: ${PORT}
+eureka:
+  instance:
+    hostname: ${vcap.application.uris[0]}
+    secureVirtualHostName: ${spring.application.name}
+    statusPageUrl: https://${eureka.instance.hostname}/info
+    healthCheckUrl: https://${eureka.instance.hostname}/health
+    homePageUrl: https://${eureka.instance.hostname}/
+    nonSecurePort: 80
+    nonSecurePortEnabled: false
+    securePortEnabled: true
+    metadataMap:
+      instanceId: ${spring.application.name}:${spring.application.instance_id:${random.value}}
+  client:
+    serviceUrl:
+      defaultZone: ${vcap.services.registry.credentials.url}
+    healthcheck:
+      enabled: true

@@ -1,0 +1,24 @@
+language: java
+jdk:
+- oraclejdk8
+sudo: false
+install:
+- mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V
+- mvn package
+#deploy:
+#  edge: true
+#  provider: cloudfoundry
+#  api: https://api.run.pivotal.io
+#  username: gina.debeukelaer@ordina.be
+#  password:
+#    secure: xxx
+#  organization: OrdinaBelgiumNV
+#  space: development
+#  on:
+#    repo: Ordineo/milestone-core-service
+#    branch: master
+#after_deploy:
+#- mvn clean test jacoco:report coveralls:report
+notifications:
+  slack:
+    secure: ZjeAP0+63w3VPpulbS8w4f9cFLQUyDyNIX4sECcp+grceXFwF9CzeAuVAZTtJ7P5iFA2bzE/oiiiDuXPerK2e41YJLwikrXmGMwgxHvne0s968BaeVfMI2LzEu+CcAd2F8hVmb6pQ1d0pC+ygcl5tj9xJogUdNjTEmhj6ETvyku+Qh3Hb4FJTlC4WoiZP/csVURZVi0pgK88Z9aURvjjQWmS8QpSOEgEKoD9sxa/S6rEZe1GBZHETJJT7Hc9pOD+CNJxWdb4P7cHHMEPKA3Jx8p6KCPL7m63yTKb2QpLKPnmEeODY2+z461HDZGmVlbJ1Luoc0EwkFQAkvoqX1/GNJGDDuBcjbXJmGeYM/ZOyiDCxfJ+ztAdHtNNDY6DG1q4Yax0f8/UDeXH06La/DdesNHR6nGAXr6/kl508KY0F8y0HGgXvqa6ehSlp5tSMU2d3mJ1ZZMuCPU/XPMMIesp+Ew73SxKg0r+1jGCpHmNSd33jVVtPiSLmtCD2cLyWAnSC0Ul0oEbQAsMcNfuVIGRwCKTZk1lCawKFq3eLLD6I9tUVRbYWPfG5gXIcZhFxy7KhyxrYP9Z1LZmCaG2ZQRPwPXRhjwNXy+YdsxFMNhYF9kVXmfDWn+0nxcFWu2qgcHsGjq0G7XJ1K9x4We8/yl1FWU4AsrhifHgxqr/8M7NhJ4=
