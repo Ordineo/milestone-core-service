@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 | Servers          | Coverage                                                                                                                                                                        | Services           | Coverage                                                                                                                                                                                     |
 |------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | Config Server    | [![Config Server](https://coveralls.io/repos/github/Ordineo/config/badge.svg?branch=master)](https://coveralls.io/github/Ordineo/config?branch=master)                          | Front-end Service  | [![Front-end Service](https://coveralls.io/repos/github/Ordineo/front-end/badge.svg?branch=master)](https://coveralls.io/github/Ordineo/front-end?branch=master)                             |
@@ -13,4 +13,3 @@ Parent repository containing all submodules
 =======
 # milestone-core-service
 Milestone core microservice for Ordineo
->>>>>>> 4d22cc460f92c75fdc371ea53b59e7c52759580e
