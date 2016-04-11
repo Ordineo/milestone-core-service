@@ -14,6 +14,8 @@ public interface ObjectiveView {
 
     Long getId();
 
+    String getTitle();
+
     String getDescription();
 
     ObjectiveType getObjectiveType();

@@ -16,6 +16,4 @@ public interface ObjectiveRepository extends PagingAndSortingRepository<Objectiv
     @RestResource(path="findByTitle", rel="findByTitle")
     Objective findByTitleIgnoreCase(@Param("title") String title);
 
-    Objective findByDescription(@Param("description") String description);
-
 }

@@ -14,8 +14,6 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 public class Objective implements Identifiable<Long>{
 
     @Id
