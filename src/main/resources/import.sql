@@ -1,0 +1,3 @@
+INSERT INTO objective(id, title,description,objectiveType) VALUES (1,'Spring Boot','Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters','TRAINING');
+INSERT INTO objective_tags(objective_id, tag) values (1, 'java');
+INSERT INTO objective_tags(objective_id, tag) values (1, 'spring');
