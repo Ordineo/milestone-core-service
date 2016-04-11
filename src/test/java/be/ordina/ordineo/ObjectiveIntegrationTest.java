@@ -49,7 +49,7 @@ public class ObjectiveIntegrationTest {
 
     @Test
     public void get_notfound() throws Exception {
-        mockMvc.perform(get("/api/objectives/2"))
+        mockMvc.perform(get("/api/objectives/999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -57,7 +57,7 @@ public class ObjectiveIntegrationTest {
     public void list() throws Exception {
         mockMvc.perform(get("/api/objectives"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.objectives", hasSize(1)));
+                .andExpect(jsonPath("$._embedded.objectives", hasSize(2)));
     }
 
 
