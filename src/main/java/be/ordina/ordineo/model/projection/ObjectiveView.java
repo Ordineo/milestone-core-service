@@ -12,8 +12,6 @@ import java.util.List;
 @Projection(name = "objectiveView", types = {Objective.class})
 public interface ObjectiveView {
 
-    Long getId();
-
     String getTitle();
 
     String getDescription();
@@ -21,4 +19,5 @@ public interface ObjectiveView {
     ObjectiveType getObjectiveType();
 
     List<String> getTags();
+
 }
