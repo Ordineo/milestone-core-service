@@ -60,7 +60,7 @@ public class MilestoneIntegrationTest {
     }
 
     @Test
-    public void get_existing() throws Exception {
+    public void getExistingMilestone() throws Exception {
         mockMvc.perform(get("/api/milestones/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("gide")))
@@ -83,12 +83,12 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("moreInformation").description("More information about the milestone"),
-                        fieldWithPath("_links").description("links to other resources")
+                        fieldWithPath("_links").description("links to resources")
                 )));
     }
 
     @Test
-    public void get_existingWithProjection() throws Exception {
+    public void getExistingMilestoneWithProjection() throws Exception {
         mockMvc.perform(get("/api/milestones/1?projection=milestoneView"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("gide")))
@@ -111,13 +111,13 @@ public class MilestoneIntegrationTest {
                 fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                 fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
                 fieldWithPath("moreInformation").description("More information about the milestone"),
-                fieldWithPath("_links").description("links to other resources")
+                fieldWithPath("_links").description("links to resources")
         )));
     }
 
     @Test
     public void get_notfound() throws Exception {
-        mockMvc.perform(get("/api/milestones/2"))
+        mockMvc.perform(get("/api/milestones/999"))
                 .andExpect(status().isNotFound());
     }
 
@@ -125,7 +125,26 @@ public class MilestoneIntegrationTest {
     public void list() throws Exception {
         mockMvc.perform(get("/api/milestones"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.milestones", hasSize(1)));
+                .andExpect(jsonPath("$._embedded.milestones", hasSize(2)));
+    }
+
+    @Test
+    public void findByUsernameOrderByDate() throws Exception {
+        mockMvc.perform(get("/api/milestones/search/findByUsername?username=gide"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.milestones", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.milestones[0]._links.self.href", endsWith("/milestones/2")))
+                .andExpect(jsonPath("$._embedded.milestones[1]._links.self.href", endsWith("/milestones/1")))
+        .andDo(document("{method-name}", responseFields(
+                fieldWithPath("_embedded.milestones[].username").description("The milestone's unique database identifier"),
+                fieldWithPath("_embedded.milestones[].objective").description("The milestone's objective").type(Objective.class),
+                fieldWithPath("_embedded.milestones[].createDate").description("When the milestone was created").type(LocalDate.class),
+                fieldWithPath("_embedded.milestones[].dueDate").optional().description("When the milestone is due").type(LocalDate.class),
+                fieldWithPath("_embedded.milestones[].endDate").description("When the milestone will end").type(LocalDate.class),
+                fieldWithPath("_embedded.milestones[].moreInformation").description("More information about the milestone"),
+                fieldWithPath("_embedded.milestones[]._links").description("links to other resources"),
+                fieldWithPath("_links").description("links to resources")
+        )));
     }
 
 

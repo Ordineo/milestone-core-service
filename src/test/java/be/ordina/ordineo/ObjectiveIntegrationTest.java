@@ -61,7 +61,7 @@ public class ObjectiveIntegrationTest {
     }
 
     @Test
-    public void get_existing() throws Exception {
+    public void getExistingObjective() throws Exception {
         mockMvc.perform(get("/api/objectives/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("Spring Boot")))
