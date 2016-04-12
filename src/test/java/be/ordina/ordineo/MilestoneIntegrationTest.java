@@ -1,19 +1,31 @@
 package be.ordina.ordineo;
 
+import be.ordina.ordineo.model.Objective;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.restdocs.RestDocumentation;
+import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
+import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
+import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -28,13 +40,23 @@ public class MilestoneIntegrationTest {
 
     private MockMvc mockMvc;
 
+    private ObjectWriter objectWriter;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Rule
+    public RestDocumentation restDocumentation = new RestDocumentation("target/generated-snippets");
     @Autowired
     private WebApplicationContext wac;
+    private RestDocumentationResultHandler document;
 
     @Before
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
+                .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https"))
                 .build();
+        objectWriter = objectMapper.writer();
     }
 
     @Test
@@ -53,7 +75,16 @@ public class MilestoneIntegrationTest {
                 .andExpect(jsonPath("$._embedded.objective._links.self.href", endsWith("/objectives/2{?projection}")))
                 .andExpect(jsonPath("$._links.self.href", endsWith("/milestones/1")))
                 .andExpect(jsonPath("$._links.milestone.href", endsWith("/milestones/1{?projection}")))
-                .andExpect(jsonPath("$._links.objective.href", endsWith("/milestones/1/objective")));
+                .andExpect(jsonPath("$._links.objective.href", endsWith("/milestones/1/objective")))
+                .andDo(document("{method-name}",responseFields(
+                        fieldWithPath("username").description("The milestone's unique database identifier"),
+                        fieldWithPath("_embedded.objective").description("The milestone's objective").type(Objective.class),
+                        fieldWithPath("createDate").description("When the milestone was created").type(LocalDate.class),
+                        fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
+                        fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
+                        fieldWithPath("moreInformation").description("More information about the milestone"),
+                        fieldWithPath("_links").description("links to other resources")
+                )));
     }
 
     @Test
@@ -72,7 +103,16 @@ public class MilestoneIntegrationTest {
                 .andExpect(jsonPath("$.objective._links.self.href", endsWith("/objectives/2{?projection}")))
                 .andExpect(jsonPath("$._links.self.href", endsWith("/milestones/1")))
                 .andExpect(jsonPath("$._links.milestone.href", endsWith("/milestones/1{?projection}")))
-                .andExpect(jsonPath("$._links.objective.href", endsWith("/milestones/1/objective")));
+                .andExpect(jsonPath("$._links.objective.href", endsWith("/milestones/1/objective")))
+        .andDo(document("{method-name}",responseFields(
+                fieldWithPath("username").description("The milestone's unique database identifier"),
+                fieldWithPath("objective").description("The milestone's objective").type(Objective.class),
+                fieldWithPath("createDate").description("When the milestone was created").type(LocalDate.class),
+                fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
+                fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
+                fieldWithPath("moreInformation").description("More information about the milestone"),
+                fieldWithPath("_links").description("links to other resources")
+        )));
     }
 
     @Test
