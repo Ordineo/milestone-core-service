@@ -83,27 +83,69 @@ from resource to resource.
 [[resources]]
 = Resources
 
-[[resources-milestone-create]]
+[[resources-milestone-get]]
 === Requesting a milestone
 
-A `GET` request is used to get a milestone or an objective
+A `GET` request is used to get a milestone
 
 ==== Response fields
 
-include::{snippets}/get-existing/response-fields.adoc[]
-include::{snippets}/get-existing-with-projection/response-fields.adoc[]
+include::{snippets}/get-existing-milestone/response-fields.adoc[]
+include::{snippets}/get-existing-milestone-with-projection/response-fields.adoc[]
 
 ==== Request structure
 
-include::{snippets}/get-existing/http-request.adoc[]
-include::{snippets}/get-existing-with-projection/http-request.adoc[]
+include::{snippets}/get-existing-milestone/http-request.adoc[]
+include::{snippets}/get-existing-milestone-with-projection/http-request.adoc[]
 
 ==== Example request
 
-include::{snippets}/get-existing/curl-request.adoc[]
-include::{snippets}/get-existing-with-projection/curl-request.adoc[]
+include::{snippets}/get-existing-milestone/curl-request.adoc[]
+include::{snippets}/get-existing-milestone-with-projection/curl-request.adoc[]
 
 ==== Example response
 
-include::{snippets}/get-existing/http-response.adoc[]
-include::{snippets}/get-existing-with-projection/http-response.adoc[]
+include::{snippets}/get-existing-milestone/http-response.adoc[]
+include::{snippets}/get-existing-milestone-with-projection/http-response.adoc[]
+
+[[resources-objective-get]]
+=== Requesting an objective
+
+A `GET` request is used to get an objective
+
+==== Response fields
+
+include::{snippets}/get-existing-objective/response-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/get-existing-objective/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/get-existing-objective/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/get-existing-objective/http-response.adoc[]
+
+[[resources-milestones-byUsername]]
+=== Listing milestones by username ordered by end/due date
+
+A `GET` request is used to get a list of milestones for a given user ordered by end/due date
+
+==== Response fields
+
+include::{snippets}/find-by-username-order-by-date/response-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/find-by-username-order-by-date/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/find-by-username-order-by-date/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/find-by-username-order-by-date/http-response.adoc[]
