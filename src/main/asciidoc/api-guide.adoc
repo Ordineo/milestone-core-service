@@ -88,24 +88,32 @@ from resource to resource.
 
 A `GET` request is used to get a milestone
 
-==== Response fields
+==== default
 
+===== Response fields
 include::{snippets}/get-existing-milestone/response-fields.adoc[]
+
+===== Request structure
+include::{snippets}/get-existing-milestone/http-request.adoc[]
+
+===== Example request
+include::{snippets}/get-existing-milestone/curl-request.adoc[]
+
+===== Example response
+include::{snippets}/get-existing-milestone/http-response.adoc[]
+
+==== with projection "milestoneView"
+
+===== Response fields
 include::{snippets}/get-existing-milestone-with-projection/response-fields.adoc[]
 
-==== Request structure
-
-include::{snippets}/get-existing-milestone/http-request.adoc[]
+===== Request structure
 include::{snippets}/get-existing-milestone-with-projection/http-request.adoc[]
 
-==== Example request
-
-include::{snippets}/get-existing-milestone/curl-request.adoc[]
+===== Example request
 include::{snippets}/get-existing-milestone-with-projection/curl-request.adoc[]
 
-==== Example response
-
-include::{snippets}/get-existing-milestone/http-response.adoc[]
+===== Example response
 include::{snippets}/get-existing-milestone-with-projection/http-response.adoc[]
 
 [[resources-objective-get]]

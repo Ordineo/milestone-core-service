@@ -116,7 +116,7 @@ public class MilestoneIntegrationTest {
     }
 
     @Test
-    public void get_notfound() throws Exception {
+    public void getNonExistingMilestoneShouldReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/milestones/999"))
                 .andExpect(status().isNotFound());
     }
