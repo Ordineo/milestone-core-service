@@ -6,6 +6,8 @@ spring:
     rest:
       basePath: /api
       defaultMediaType: application/hal+json
+      returnBodyOnUpdate: false
+      returnBodyOnCreate: false
   jpa:
     show-sql: true
     hibernate:
