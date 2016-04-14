@@ -75,7 +75,7 @@ public class ObjectiveIntegrationTest {
     }
 
     @Test
-    public void get_notfound() throws Exception {
+    public void getNonExistingObjectiveShouldReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/objectives/999"))
                 .andExpect(status().isNotFound());
     }
