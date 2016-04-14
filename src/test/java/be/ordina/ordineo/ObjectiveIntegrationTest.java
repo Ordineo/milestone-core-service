@@ -10,19 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.restdocs.RestDocumentation;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.*;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.halLinks;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.linkWithRel;
-import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.links;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
