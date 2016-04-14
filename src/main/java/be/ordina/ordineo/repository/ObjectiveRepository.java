@@ -16,8 +16,8 @@ import java.util.List;
 @RepositoryRestResource(excerptProjection = ObjectiveView.class)
 public interface ObjectiveRepository extends JpaRepository<Objective,Long> {
 
-    @RestResource(path="findByTitle", rel="findByTitle")
-    @Query("select DISTINCT o from Objective o join o.tags t where t = :text or o.title = :text")
+    @RestResource(path="findByTitleOrTags", rel="findByTitleOrTags")
+    @Query("select DISTINCT o from Objective o join o.tags t where lower(t) LIKE CONCAT('%',lower(:text),'%') or lower(o.title) LIKE CONCAT('%',lower(:text),'%') ")
     List<Objective> findByTitleOrTags(@Param("text") String text);
 
 }
