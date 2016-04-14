@@ -108,21 +108,37 @@ include::{snippets}/get-existing-milestone-with-projection/http-response.adoc[]
 
 A `GET` request is used to get an objective
 
-==== Response fields
+==== default
+
+===== Response fields
 
 include::{snippets}/get-existing-objective/response-fields.adoc[]
 
-==== Request structure
+===== Request structure
 
 include::{snippets}/get-existing-objective/http-request.adoc[]
 
-==== Example request
+===== Example request
 
 include::{snippets}/get-existing-objective/curl-request.adoc[]
 
-==== Example response
+===== Example response
 
 include::{snippets}/get-existing-objective/http-response.adoc[]
+
+==== with projection "objectiveTitleAndTagsView"
+
+===== Response fields
+include::{snippets}/get-existing-objective-with-projection/response-fields.adoc[]
+
+===== Request structure
+include::{snippets}/get-existing-objective-with-projection/http-request.adoc[]
+
+===== Example request
+include::{snippets}/get-existing-objective-with-projection/curl-request.adoc[]
+
+===== Example response
+include::{snippets}/get-existing-objective-with-projection/http-response.adoc[]
 
 [[resources-milestones-byUsername]]
 === Listing milestones by username ordered by end/due date

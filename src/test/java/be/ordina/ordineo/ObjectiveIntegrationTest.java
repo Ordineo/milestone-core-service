@@ -65,13 +65,29 @@ public class ObjectiveIntegrationTest {
                 .andExpect(jsonPath("$.tags[1]", is("spring")))
                 .andExpect(jsonPath("$._links.self.href", endsWith("/objectives/1")))
                 .andExpect(jsonPath("$._links.objective.href", endsWith("/objectives/1{?projection}")))
-        .andDo(document("{method-name}",responseFields(
-                fieldWithPath("title").description("The objective's unique database identifier"),
-                fieldWithPath("tags").description("The objective's related tags"),
-                fieldWithPath("description").description("The objective's description"),
-                fieldWithPath("objectiveType").description("The objective's type"),
-                fieldWithPath("_links").description("links to other resources")
-        )));
+                .andDo(document("{method-name}",responseFields(
+                        fieldWithPath("title").description("The objective's unique database identifier"),
+                        fieldWithPath("tags").description("The objective's related tags"),
+                        fieldWithPath("description").description("The objective's description"),
+                        fieldWithPath("objectiveType").description("The objective's type"),
+                        fieldWithPath("_links").description("links to other resources")
+                )));
+    }
+
+    @Test
+    public void getExistingObjectiveWithProjection() throws Exception {
+        mockMvc.perform(get("/api/objectives/1?projection=objectiveTitleAndTagsView"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title", is("Spring Boot")))
+                .andExpect(jsonPath("$.tags[0]", is("java")))
+                .andExpect(jsonPath("$.tags[1]", is("spring")))
+                .andExpect(jsonPath("$._links.self.href", endsWith("/objectives/1")))
+                .andExpect(jsonPath("$._links.objective.href", endsWith("/objectives/1{?projection}")))
+                .andDo(document("{method-name}",responseFields(
+                        fieldWithPath("title").description("The objective's unique database identifier"),
+                        fieldWithPath("tags").description("The objective's related tags"),
+                        fieldWithPath("_links").description("links to other resources")
+                )));
     }
 
     @Test
