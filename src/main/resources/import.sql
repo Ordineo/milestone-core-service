@@ -7,3 +7,8 @@ INSERT INTO objective_tags(objective_id, tag) VALUES (2, 'java');
 
 INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (1, 2, 'gide', '2016-02-01', '2016-12-31', '2016-03-01', 'time to upgrade from java 6 to java 8 certificate.');
 INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (2, 1, 'gide', '2017-02-01', '2017-12-31', null, 'extra spring milestone');
+
+INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (3, 2, 'Rydg', '2016-02-01', '2016-12-31', '2016-03-01', 'time to upgrade from java 6 to java 8 certificate.');
+INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (4, 1, 'Rydg', '2017-02-01', '2017-12-31', null, 'extra spring milestone');
+INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (5, 2, 'Rydg', '2016-02-01', '2016-12-31', '2016-03-01', 'time to upgrade from java 6 to java 8 certificate.');
+INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (6, 1, 'Rydg', '2017-02-01', '2017-12-31', null, 'extra spring milestone');

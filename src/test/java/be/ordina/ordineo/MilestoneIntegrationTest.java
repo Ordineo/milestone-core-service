@@ -125,7 +125,7 @@ public class MilestoneIntegrationTest {
     public void list() throws Exception {
         mockMvc.perform(get("/api/milestones"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.milestones", hasSize(2)));
+                .andExpect(jsonPath("$._embedded.milestones", hasSize(6)));
     }
 
     @Test
