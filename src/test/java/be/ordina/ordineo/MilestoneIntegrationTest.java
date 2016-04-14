@@ -146,6 +146,4 @@ public class MilestoneIntegrationTest {
                 fieldWithPath("_links").description("links to resources")
         )));
     }
-
-
 }
