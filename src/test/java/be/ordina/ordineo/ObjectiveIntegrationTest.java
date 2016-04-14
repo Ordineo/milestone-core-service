@@ -17,6 +17,8 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 
+import java.util.Arrays;
+
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -87,5 +89,18 @@ public class ObjectiveIntegrationTest {
                 .andExpect(jsonPath("$._embedded.objectives", hasSize(3)));
     }
 
+
+    @Test
+    public void findByTitleOrTag() throws Exception{
+        mockMvc.perform(get("/api/objectives/search/findByTitleOrTags?text=boot"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.objectives", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.objectives[0].title",is("Spring Boot")))
+                .andExpect(jsonPath("$._embedded.objectives[0].tags", is(Arrays.asList("java","spring"))))
+                .andExpect(jsonPath("$._embedded.objectives[0].description", is("Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters")))
+                .andExpect(jsonPath("$._embedded.objectives[0].objectiveType", is("TRAINING")))
+                .andExpect(jsonPath("$._embedded.objectives[0]._links.self.href", endsWith("/objectives/1")))
+                .andExpect(jsonPath("$._embedded.objectives[0]._links.objective.href", endsWith("/objectives/1{?projection}")));
+    }
 
 }
