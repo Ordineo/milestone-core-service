@@ -1,4 +1,4 @@
-= RESTful Employee API Guide
+= RESTful Milestone API Guide
 Andy Wilkinson;
 :doctype: book
 :toc:
