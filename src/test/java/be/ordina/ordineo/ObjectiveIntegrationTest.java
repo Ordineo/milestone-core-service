@@ -84,7 +84,7 @@ public class ObjectiveIntegrationTest {
     public void list() throws Exception {
         mockMvc.perform(get("/api/objectives"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.objectives", hasSize(2)));
+                .andExpect(jsonPath("$._embedded.objectives", hasSize(3)));
     }
 
 
