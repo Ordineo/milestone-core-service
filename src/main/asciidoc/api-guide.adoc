@@ -165,6 +165,10 @@ include::{snippets}/find-by-username-order-by-date/http-response.adoc[]
 
 A `GET` request is used to get a list of objective with the tag or title as parameter
 
+==== Response fields
+
+include::{snippets}/find-by-title-or-tag/response-fields.adoc[]
+
 ==== Request structure
 
 include::{snippets}/find-by-title-or-tag/http-request.adoc[]
