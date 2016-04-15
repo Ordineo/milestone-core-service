@@ -116,7 +116,7 @@ public class ObjectiveIntegrationTest {
                 .andExpect(jsonPath("$._embedded.objectives[0].description", is("Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters")))
                 .andExpect(jsonPath("$._embedded.objectives[0].objectiveType", is("TRAINING")))
                 .andExpect(jsonPath("$._embedded.objectives[0]._links.self.href", endsWith("/objectives/1")))
-                .andExpect(jsonPath("$._embedded.objectives[0]._links.objective.href", endsWith("/objectives/1{?projection}")));
+                .andExpect(jsonPath("$._embedded.objectives[0]._links.objective.href", endsWith("/objectives/1{?projection}"))
+                ).andDo(document("{method-name}"));
     }
-
 }

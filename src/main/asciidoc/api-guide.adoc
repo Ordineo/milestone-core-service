@@ -160,3 +160,19 @@ include::{snippets}/find-by-username-order-by-date/curl-request.adoc[]
 ==== Example response
 
 include::{snippets}/find-by-username-order-by-date/http-response.adoc[]
+
+=== Find Objective by tag or title
+
+A `GET` request is used to get a list of objective with the tag or title as parameter
+
+==== Request structure
+
+include::{snippets}/find-by-title-or-tag/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/find-by-title-or-tag/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/find-by-title-or-tag/http-response.adoc[]
