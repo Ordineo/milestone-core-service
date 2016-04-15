@@ -124,10 +124,11 @@ public class ObjectiveIntegrationTest {
                 fieldWithPath("_embedded.objectives[].tags").description("The objective's tag"),
                 fieldWithPath("_embedded.objectives[].description").description("The objective's description"),
                 fieldWithPath("_embedded.objectives[].objectiveType").optional().description("The objective's type"),
-                fieldWithPath("_links.self.href").description("The search objective self link"),
-                fieldWithPath("_embedded.objectives[]._links.self.href").description("The objective's self link"),
-                fieldWithPath("_embedded.objectives[]._links.objective").description("The objective's uri link")
+                fieldWithPath("_embedded.objectives[]._links.self").description("The objective's self link"),
+                fieldWithPath("_embedded.objectives[]._links.objective").description("The objective's uri link"),
+                fieldWithPath("_links.self").description("The search objective self link")
 
-        )));;
+
+                )));;
     }
 }
