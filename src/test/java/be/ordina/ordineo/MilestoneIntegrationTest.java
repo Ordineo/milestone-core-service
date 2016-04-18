@@ -1,32 +1,53 @@
 package be.ordina.ordineo;
 
+import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import com.jayway.jsonpath.JsonPath;
+import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.hateoas.Link;
+import org.springframework.hateoas.LinkDiscoverer;
+import org.springframework.hateoas.MediaTypes;
+import org.springframework.hateoas.hal.HalLinkDiscoverer;
+import org.springframework.hateoas.hal.Jackson2HalModule;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.restdocs.RestDocumentation;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.snippet.Attributes.key;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -76,7 +97,7 @@ public class MilestoneIntegrationTest {
                 .andExpect(jsonPath("$._links.self.href", endsWith("/milestones/1")))
                 .andExpect(jsonPath("$._links.milestone.href", endsWith("/milestones/1{?projection}")))
                 .andExpect(jsonPath("$._links.objective.href", endsWith("/milestones/1/objective")))
-                .andDo(document("{method-name}",responseFields(
+                .andDo(document("{method-name}", responseFields(
                         fieldWithPath("username").description("The milestone's unique database identifier"),
                         fieldWithPath("_embedded.objective").description("The milestone's objective").type(Objective.class),
                         fieldWithPath("createDate").description("When the milestone was created").type(LocalDate.class),
@@ -104,15 +125,15 @@ public class MilestoneIntegrationTest {
                 .andExpect(jsonPath("$._links.self.href", endsWith("/milestones/1")))
                 .andExpect(jsonPath("$._links.milestone.href", endsWith("/milestones/1{?projection}")))
                 .andExpect(jsonPath("$._links.objective.href", endsWith("/milestones/1/objective")))
-        .andDo(document("{method-name}",responseFields(
-                fieldWithPath("username").description("The milestone's unique database identifier"),
-                fieldWithPath("objective").description("The milestone's objective").type(Objective.class),
-                fieldWithPath("createDate").description("When the milestone was created").type(LocalDate.class),
-                fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
-                fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
-                fieldWithPath("moreInformation").description("More information about the milestone"),
-                fieldWithPath("_links").description("links to resources")
-        )));
+                .andDo(document("{method-name}", responseFields(
+                        fieldWithPath("username").description("The milestone's unique database identifier"),
+                        fieldWithPath("objective").description("The milestone's objective").type(Objective.class),
+                        fieldWithPath("createDate").description("When the milestone was created").type(LocalDate.class),
+                        fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
+                        fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
+                        fieldWithPath("moreInformation").description("More information about the milestone"),
+                        fieldWithPath("_links").description("links to resources")
+                )));
     }
 
     @Test
@@ -132,18 +153,61 @@ public class MilestoneIntegrationTest {
     public void findByUsernameOrderByDate() throws Exception {
         mockMvc.perform(get("/api/milestones/search/findByUsername?username=gide"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.milestones", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.milestones", hasSize(3)))
                 .andExpect(jsonPath("$._embedded.milestones[0]._links.self.href", endsWith("/milestones/2")))
                 .andExpect(jsonPath("$._embedded.milestones[1]._links.self.href", endsWith("/milestones/1")))
-        .andDo(document("{method-name}", responseFields(
-                fieldWithPath("_embedded.milestones[].username").description("The milestone's unique database identifier"),
-                fieldWithPath("_embedded.milestones[].objective").description("The milestone's objective").type(Objective.class),
-                fieldWithPath("_embedded.milestones[].createDate").description("When the milestone was created").type(LocalDate.class),
-                fieldWithPath("_embedded.milestones[].dueDate").optional().description("When the milestone is due").type(LocalDate.class),
-                fieldWithPath("_embedded.milestones[].endDate").description("When the milestone will end").type(LocalDate.class),
-                fieldWithPath("_embedded.milestones[].moreInformation").description("More information about the milestone"),
-                fieldWithPath("_embedded.milestones[]._links").description("links to other resources"),
-                fieldWithPath("_links").description("links to resources")
-        )));
+                .andDo(document("{method-name}", responseFields(
+                        fieldWithPath("_embedded.milestones[].username").description("The milestone's unique database identifier"),
+                        fieldWithPath("_embedded.milestones[].objective").description("The milestone's objective").type(Objective.class),
+                        fieldWithPath("_embedded.milestones[].createDate").description("When the milestone was created").type(LocalDate.class),
+                        fieldWithPath("_embedded.milestones[].dueDate").optional().description("When the milestone is due").type(LocalDate.class),
+                        fieldWithPath("_embedded.milestones[].endDate").description("When the milestone will end").type(LocalDate.class),
+                        fieldWithPath("_embedded.milestones[].moreInformation").description("More information about the milestone"),
+                        fieldWithPath("_embedded.milestones[]._links").description("links to other resources"),
+                        fieldWithPath("_links").description("links to resources")
+                )));
+    }
+
+    @Test
+    public void postMilestone() throws Exception {
+
+
+        String string = "{\n" +
+                "  \"username\": \"gide\",\n" +
+                "  \"createDate\": \"2016-02-01\",\n" +
+                "  \"dueDate\": \"2016-12-31\",\n" +
+                "  \"endDate\": \"2016-03-01\",\n" +
+                "  \"moreInformation\": \"test\",\n" +
+                "  \"objective\" : \"http://localhost:8080/api/objectives/1\"\n" +
+                "}";
+        System.out.println(string);
+        ConstrainedFields fields = new ConstrainedFields(Milestone.class);
+
+        mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isCreated())
+                .andDo(document("{method-name}", requestFields(
+                        fields.withPath("username").description("The milestone's unique database identifier"),
+                        fields.withPath("objective").description("The milestone's objective"),
+                        fields.withPath("createDate").description("When the milestone was created").type(LocalDate.class),
+                        fields.withPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
+                        fields.withPath("endDate").description("When the milestone will end").type(LocalDate.class),
+                        fields.withPath("moreInformation").description("More information about the milestone")
+                )))
+                .andReturn().getResponse().getHeader("Location");
+    }
+
+
+    private static class ConstrainedFields {
+        private final ConstraintDescriptions constraintDescriptions;
+
+        ConstrainedFields(Class<?> input) {
+            this.constraintDescriptions = new ConstraintDescriptions(input);
+        }
+
+        private FieldDescriptor withPath(String path) {
+            return fieldWithPath(path).attributes(key("constraints").value(StringUtils
+                    .collectionToDelimitedString(this.constraintDescriptions
+                            .descriptionsForProperty(path), ". ")));
+        }
     }
 }
