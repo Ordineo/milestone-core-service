@@ -2,45 +2,29 @@ package be.ordina.ordineo;
 
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.jayway.jsonpath.JsonPath;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
-import org.springframework.hateoas.Link;
-import org.springframework.hateoas.LinkDiscoverer;
 import org.springframework.hateoas.MediaTypes;
-import org.springframework.hateoas.hal.HalLinkDiscoverer;
-import org.springframework.hateoas.hal.Jackson2HalModule;
-import org.springframework.http.MediaType;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.restdocs.RestDocumentation;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -153,7 +137,7 @@ public class MilestoneIntegrationTest {
     public void findByUsernameOrderByDate() throws Exception {
         mockMvc.perform(get("/api/milestones/search/findByUsername?username=gide"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.milestones", hasSize(3)))
+                .andExpect(jsonPath("$._embedded.milestones", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.milestones[0]._links.self.href", endsWith("/milestones/2")))
                 .andExpect(jsonPath("$._embedded.milestones[1]._links.self.href", endsWith("/milestones/1")))
                 .andDo(document("{method-name}", responseFields(
@@ -170,10 +154,8 @@ public class MilestoneIntegrationTest {
 
     @Test
     public void postMilestone() throws Exception {
-
-
         String string = "{\n" +
-                "  \"username\": \"gide\",\n" +
+                "  \"username\": \"PhDa\",\n" +
                 "  \"createDate\": \"2016-02-01\",\n" +
                 "  \"dueDate\": \"2016-12-31\",\n" +
                 "  \"endDate\": \"2016-03-01\",\n" +
