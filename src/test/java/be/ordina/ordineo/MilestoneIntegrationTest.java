@@ -162,7 +162,6 @@ public class MilestoneIntegrationTest {
                 "  \"moreInformation\": \"test\",\n" +
                 "  \"objective\" : \"http://localhost:8080/api/objectives/1\"\n" +
                 "}";
-        System.out.println(string);
         ConstrainedFields fields = new ConstrainedFields(Milestone.class);
 
         mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON))
@@ -171,9 +170,9 @@ public class MilestoneIntegrationTest {
                         fields.withPath("username").description("The milestone's unique database identifier"),
                         fields.withPath("objective").description("The milestone's URI"),
                         fields.withPath("createDate").description("When the milestone was created").type(LocalDate.class),
-                        fields.withPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
-                        fields.withPath("endDate").description("When the milestone will end").type(LocalDate.class),
-                        fields.withPath("moreInformation").description("More information about the milestone")
+                        fields.withPath("dueDate").description("When the milestone is due").type(LocalDate.class),
+                        fields.withPath("endDate").optional().description("When the milestone will end").type(LocalDate.class),
+                        fields.withPath("moreInformation").optional().description("More information about the milestone")
                 )))
                 .andReturn().getResponse().getHeader("Location");
     }
