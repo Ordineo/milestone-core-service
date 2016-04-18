@@ -31,6 +31,10 @@ public class Objective implements Identifiable<Long>{
     @Column(name = "tag")
     private List<String> tags = new ArrayList<>();
 
+    public void addTag(String tag){
+        tags.add(tag);
+    }
+
 }
 
 

@@ -18,6 +18,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
+@Table(uniqueConstraints=
+        @UniqueConstraint(columnNames = {"username", "objective_id"}, name = "UC_USERNAME_OBJECTIVEID"))
 public class Milestone implements Identifiable<Long> {
 
     @Id
