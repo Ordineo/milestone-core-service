@@ -1,5 +1,6 @@
 package be.ordina.ordineo;
 
+import be.ordina.ordineo.model.Objective;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Before;
@@ -17,6 +18,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 
+import java.time.LocalDate;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.*;
@@ -116,7 +118,17 @@ public class ObjectiveIntegrationTest {
                 .andExpect(jsonPath("$._embedded.objectives[0].description", is("Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters")))
                 .andExpect(jsonPath("$._embedded.objectives[0].objectiveType", is("TRAINING")))
                 .andExpect(jsonPath("$._embedded.objectives[0]._links.self.href", endsWith("/objectives/1")))
-                .andExpect(jsonPath("$._embedded.objectives[0]._links.objective.href", endsWith("/objectives/1{?projection}")));
-    }
+                .andExpect(jsonPath("$._embedded.objectives[0]._links.objective.href", endsWith("/objectives/1{?projection}"))
+                ).andDo(document("{method-name}", responseFields(
+                fieldWithPath("_embedded.objectives[].title").description("The objective's unique database identifier"),
+                fieldWithPath("_embedded.objectives[].tags").description("The objective's tag"),
+                fieldWithPath("_embedded.objectives[].description").description("The objective's description"),
+                fieldWithPath("_embedded.objectives[].objectiveType").optional().description("The objective's type"),
+                fieldWithPath("_embedded.objectives[]._links.self").description("The objective's self link"),
+                fieldWithPath("_embedded.objectives[]._links.objective").description("The objective's uri link"),
+                fieldWithPath("_links.self").description("The search objective self link")
 
+
+                )));;
+    }
 }
