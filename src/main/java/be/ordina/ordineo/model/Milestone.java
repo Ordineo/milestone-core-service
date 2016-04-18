@@ -3,6 +3,9 @@ package be.ordina.ordineo.model;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.hateoas.Identifiable;
+import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.Resources;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -15,7 +18,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-public class Milestone {
+public class Milestone implements Identifiable<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
