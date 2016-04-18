@@ -137,7 +137,7 @@ public class MilestoneIntegrationTest {
     public void findByUsernameOrderByDate() throws Exception {
         mockMvc.perform(get("/api/milestones/search/findByUsername?username=gide"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.milestones", hasSize(3)))
+                .andExpect(jsonPath("$._embedded.milestones", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.milestones[0]._links.self.href", endsWith("/milestones/2")))
                 .andExpect(jsonPath("$._embedded.milestones[1]._links.self.href", endsWith("/milestones/1")))
                 .andDo(document("{method-name}", responseFields(
