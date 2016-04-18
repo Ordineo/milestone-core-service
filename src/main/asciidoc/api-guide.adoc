@@ -70,6 +70,27 @@ from resource to resource.
 [[resources]]
 = Resources
 
+[[resources-milestones-post]]
+=== Creating a Milestone
+
+A `POST` request is used to create a milestone
+
+==== Request fields
+
+include::{snippets}/post-milestone/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/post-milestone/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/post-milestone/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/post-milestone/http-response.adoc[]
+
 [[resources-milestone-get]]
 === Requesting a milestone
 

@@ -187,7 +187,7 @@ public class MilestoneIntegrationTest {
                 .andExpect(status().isCreated())
                 .andDo(document("{method-name}", requestFields(
                         fields.withPath("username").description("The milestone's unique database identifier"),
-                        fields.withPath("objective").description("The milestone's objective"),
+                        fields.withPath("objective").description("The milestone's URI"),
                         fields.withPath("createDate").description("When the milestone was created").type(LocalDate.class),
                         fields.withPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fields.withPath("endDate").description("When the milestone will end").type(LocalDate.class),
