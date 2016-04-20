@@ -1,6 +1,8 @@
 package be.ordina.ordineo;
 
 import be.ordina.ordineo.model.Objective;
+import be.ordina.ordineo.model.ObjectiveType;
+import be.ordina.ordineo.repository.ObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Before;
@@ -9,12 +11,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.hateoas.MediaTypes;
 import org.springframework.restdocs.RestDocumentation;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
+import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -25,7 +31,9 @@ import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
+import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
 import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,6 +45,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = MilestoneCoreApplication.class)
 @WebAppConfiguration
 public class ObjectiveIntegrationTest {
+
+    @Autowired
+    private ObjectiveRepository objectiveRepository;
 
     private MockMvc mockMvc;
 
@@ -53,8 +64,9 @@ public class ObjectiveIntegrationTest {
 
     @Before
     public void setup() {
+        this.document = document("{method-name}");
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https"))
+                .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https")).alwaysDo(this.document)
                 .build();
         objectWriter = objectMapper.writer();
     }
@@ -130,5 +142,82 @@ public class ObjectiveIntegrationTest {
 
 
                 )));;
+    }
+
+    @Test
+    public void postObjective() throws Exception {
+        Objective objective = new Objective();
+        objective.setId(7L);
+        objective.setObjectiveType(ObjectiveType.BOOK);
+        objective.setTitle("testObjective");
+        objective.setDescription("testdescription");
+        objective.addTag("Angularjs");
+        objective.addTag("Angular material");
+        String string = objectWriter.writeValueAsString(objective);
+
+        ConstrainedFields fields = new ConstrainedFields(Objective.class);
+
+        mockMvc.perform(post("/api/objectives").content(string).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isCreated())
+                .andDo(document("{method-name}", requestFields(
+                        fields.withPath("title").description("The objectives's unique database identifier"),
+                        fields.withPath("objectiveType").description("The type of objective").type(ObjectiveType.class),
+                        fields.withPath("description").description("More Information about the objective"),
+                        fields.withPath("tags").description("Tags corresponding to this objective")
+                )))
+                .andReturn().getResponse().getHeader("Location");
+    }
+
+    @Test
+    public void postObjectiveWithNullShouldReturnBadRequest() throws Exception {
+        Objective objective = new Objective();
+        objective.setId(7L);
+        objective.setObjectiveType(ObjectiveType.BOOK);
+        objective.setTitle(null);
+        objective.setDescription("testdescription");
+        objective.addTag("Angularjs");
+        objective.addTag("Angular material");
+        String string = objectWriter.writeValueAsString(objective);
+
+        ConstrainedFields fields = new ConstrainedFields(Objective.class);
+
+        mockMvc.perform(post("/api/objectives").content(string).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getHeader("Location");
+    }
+
+    @Test
+    public void updateObjective() throws Exception {
+        Objective objective = objectiveRepository.findOne(2L);
+        objective.setTitle("New Title");
+        String string = objectWriter.writeValueAsString(objective);
+        objective.addTag("NewTag");
+
+        mockMvc.perform(put("/api/objectives/" +objective.getId()).content(string).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void updateObjectiveWithNullValueShouldReturnBadRequest() throws Exception {
+        Objective objective = objectiveRepository.findOne(2L);
+        objective.setTitle(null);
+        String string = objectWriter.writeValueAsString(objective);
+
+        mockMvc.perform(put("/api/objectives/" +objective.getId()).content(string).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    private static class ConstrainedFields {
+        private final ConstraintDescriptions constraintDescriptions;
+
+        ConstrainedFields(Class<?> input) {
+            this.constraintDescriptions = new ConstraintDescriptions(input);
+        }
+
+        private FieldDescriptor withPath(String path) {
+            return fieldWithPath(path).attributes(key("constraints").value(StringUtils
+                    .collectionToDelimitedString(this.constraintDescriptions
+                            .descriptionsForProperty(path), ". ")));
+        }
     }
 }
