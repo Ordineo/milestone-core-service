@@ -91,6 +91,48 @@ include::{snippets}/post-milestone/curl-request.adoc[]
 
 include::{snippets}/post-milestone/http-response.adoc[]
 
+[[resources-milestone-update]]
+=== Updating a Milestone
+
+A `PUT` request is used to update a milestone
+
+==== Request fields
+
+include::{snippets}/post-milestone/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-milestone/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-milestone/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-milestone/http-response.adoc[]
+
+[[resources-employee-update-bad-request]]
+=== Updating a Milestone with a null value: 400 BAD REQUEST
+
+A `PUT` used to update the milestone with a null value will return a 400 BAD REQUEST
+
+==== Request fields
+
+include::{snippets}/post-milestone/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-milestone-with-null-value-should-return-bad-request/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-milestone-with-null-value-should-return-bad-request/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-milestone-with-null-value-should-return-bad-request/http-response.adoc[]
+
 [[resources-milestone-get]]
 === Requesting a milestone
 

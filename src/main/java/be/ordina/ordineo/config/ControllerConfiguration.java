@@ -15,4 +15,8 @@ public class ControllerConfiguration {
     @ResponseStatus(value= HttpStatus.BAD_REQUEST,reason = "Invalid data sent to server")
     public void constraintsNotValid(){}
 
+    @ExceptionHandler(org.springframework.transaction.TransactionSystemException.class)
+    @ResponseStatus(value=HttpStatus.BAD_REQUEST,reason = "Invalid data sent to server")
+    public void updateConstraintsNotValid(){}
+
 }
