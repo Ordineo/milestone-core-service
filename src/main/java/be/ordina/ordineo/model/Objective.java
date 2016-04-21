@@ -27,7 +27,7 @@ public class Objective implements Identifiable<Long>{
     @NotNull
     @Enumerated(EnumType.STRING)
     private ObjectiveType objectiveType;
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "tag")
     private List<String> tags = new ArrayList<>();
 

@@ -2,6 +2,7 @@ package be.ordina.ordineo;
 
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
+import be.ordina.ordineo.repository.MilestoneRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.junit.Before;
@@ -26,12 +27,14 @@ import java.time.LocalDate;
 import java.util.Arrays;
 
 import static org.hamcrest.Matchers.*;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -42,6 +45,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringApplicationConfiguration(classes = MilestoneCoreApplication.class)
 @WebAppConfiguration
 public class MilestoneIntegrationTest {
+
+    @Autowired
+    private MilestoneRepository milestoneRepository;
 
     private MockMvc mockMvc;
 
@@ -58,8 +64,9 @@ public class MilestoneIntegrationTest {
 
     @Before
     public void setup() {
+        this.document = document("{method-name}");
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
-                .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https"))
+                .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https")).alwaysDo(this.document)
                 .build();
         objectWriter = objectMapper.writer();
     }
@@ -177,6 +184,58 @@ public class MilestoneIntegrationTest {
                 .andReturn().getResponse().getHeader("Location");
     }
 
+    @Test
+    public void postMilestoneWithoutObjectiveShouldReturnBadRequest() throws Exception {
+        String string = "{\n" +
+                "  \"username\": \"PhDa\",\n" +
+                "  \"createDate\": \"2016-02-01\",\n" +
+                "  \"dueDate\": \"2016-12-31\",\n" +
+                "  \"endDate\": \"2016-03-01\",\n" +
+                "  \"moreInformation\": \"test\"\n" +
+                "}";
+        ConstrainedFields fields = new ConstrainedFields(Milestone.class);
+
+        mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isBadRequest())
+                .andReturn().getResponse().getHeader("Location");
+    }
+
+    @Test
+    public void updateMilestone() throws Exception {
+        Milestone milestone = milestoneRepository.findOne(2L);
+        milestone.setEndDate(LocalDate.now());
+        String string = objectWriter.writeValueAsString(milestone);
+
+        StringBuilder sb = new StringBuilder(string);
+        sb.insert(1,"\n  \"objective\" : \"http://localhost:8080/api/objectives/1\",");
+        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(sb.toString()).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    public void updateMilestoneWithNullValueShouldReturnBadRequest() throws Exception {
+        Milestone milestone = milestoneRepository.findOne(2L);
+        milestone.setUsername(null);
+        String string = objectWriter.writeValueAsString(milestone);
+
+        string = string.substring(0,string.length()-1);
+        string+=",\n  \"objective\" : \"http://localhost:8080/api/objectives/1\"\n" +
+                "}";
+        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(MediaTypes.HAL_JSON))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void updateMilestoneWithoutObjectiveShouldReturnBadRequest() throws Exception {
+        Milestone milestone = milestoneRepository.findOne(2L);
+        String string = objectWriter.writeValueAsString(milestone);
+
+        string = string.substring(0,string.length()-1);
+        string+=",\n  \"objective\" : null\n" +
+                "}";
+        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+    }
 
     private static class ConstrainedFields {
         private final ConstraintDescriptions constraintDescriptions;

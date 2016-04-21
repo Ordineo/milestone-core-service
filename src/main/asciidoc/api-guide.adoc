@@ -70,6 +70,8 @@ from resource to resource.
 [[resources]]
 = Resources
 
+== Milestones
+
 [[resources-milestones-post]]
 === Creating a Milestone
 
@@ -90,6 +92,48 @@ include::{snippets}/post-milestone/curl-request.adoc[]
 ==== Example response
 
 include::{snippets}/post-milestone/http-response.adoc[]
+
+[[resources-milestone-update]]
+=== Updating a Milestone
+
+A `PUT` request is used to update a milestone
+
+==== Request fields
+
+include::{snippets}/post-milestone/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-milestone/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-milestone/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-milestone/http-response.adoc[]
+
+[[resources-milestone-update-bad-request]]
+=== Updating a Milestone with a null value: 400 BAD REQUEST
+
+A `PUT` used to update the milestone with a null value will return a 400 BAD REQUEST
+
+==== Request fields
+
+include::{snippets}/post-milestone/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-milestone-with-null-value-should-return-bad-request/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-milestone-with-null-value-should-return-bad-request/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-milestone-with-null-value-should-return-bad-request/http-response.adoc[]
 
 [[resources-milestone-get]]
 === Requesting a milestone
@@ -123,6 +167,71 @@ include::{snippets}/get-existing-milestone-with-projection/curl-request.adoc[]
 
 ===== Example response
 include::{snippets}/get-existing-milestone-with-projection/http-response.adoc[]
+
+== Objectives
+
+[[resources-objective-post]]
+=== Creating an objective
+
+A `POST` request is used to create an objective
+
+==== Request fields
+
+include::{snippets}/post-objective/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/post-objective/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/post-objective/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/post-objective/http-response.adoc[]
+
+[[resources-objective-update]]
+=== Updating an objective
+
+A `PUT` request is used to update an objective
+
+==== Request fields
+
+include::{snippets}/post-objective/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-objective/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-objective/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-objective/http-response.adoc[]
+
+[[resources-objective-update-bad-request]]
+=== Updating an objective with a null value: 400 BAD REQUEST
+
+A `PUT` used to update the objective with a null value will return a 400 BAD REQUEST
+
+==== Request fields
+
+include::{snippets}/post-objective/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-objective-with-null-value-should-return-bad-request/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-objective-with-null-value-should-return-bad-request/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-objective-with-null-value-should-return-bad-request/http-response.adoc[]
 
 [[resources-objective-get]]
 === Requesting an objective
