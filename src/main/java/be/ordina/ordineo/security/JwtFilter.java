@@ -3,6 +3,12 @@ package be.ordina.ordineo.security;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -11,6 +17,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class JwtFilter extends GenericFilterBean {
     @Override
@@ -32,7 +40,24 @@ public class JwtFilter extends GenericFilterBean {
                         .parseClaimsJws(token)
                         .getBody();
             request.setAttribute("claims", claims);
-            System.out.println(claims.get("ROLES"));
+
+
+            List<GrantedAuthority> authorities = new ArrayList<GrantedAuthority>();
+
+            String s = (String)claims.get("role");
+            //String s = request.getHeader("roles");
+            s = s.replace("[", "").replace("]", "");
+            String[] split = s.split(",");
+            for (String string : split) {
+                authorities.add(new SimpleGrantedAuthority(string));
+            }
+
+            UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(claims.getSubject(), "");
+            //UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getHeader("username"), "");
+            authToken.setDetails(new WebAuthenticationDetails((HttpServletRequest) request));
+            Authentication authentication = new UsernamePasswordAuthenticationToken(claims.getSubject(), "", authorities); //this.authenticationProvider.authenticate(token);
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         catch (final SignatureException e) {
             throw new ServletException("Invalid token.");
@@ -40,5 +65,6 @@ public class JwtFilter extends GenericFilterBean {
 
         chain.doFilter(req, res);
     }
+
 
 }

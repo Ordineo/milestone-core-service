@@ -73,7 +73,8 @@ public class ObjectiveIntegrationTest {
 
     @Test
     public void getExistingObjective() throws Exception {
-        mockMvc.perform(get("/api/objectives/1"))
+        mockMvc.perform(get("/api/objectives/1")
+                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("Spring Boot")))
                 .andExpect(jsonPath("$.description", is("Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters")))
@@ -92,7 +93,8 @@ public class ObjectiveIntegrationTest {
 
     @Test
     public void getExistingObjectiveWithProjection() throws Exception {
-        mockMvc.perform(get("/api/objectives/1?projection=objectiveTitleAndTagsView"))
+        mockMvc.perform(get("/api/objectives/1?projection=objectiveTitleAndTagsView")
+                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("Spring Boot")))
                 .andExpect(jsonPath("$.tags[0]", is("java")))
@@ -114,7 +116,8 @@ public class ObjectiveIntegrationTest {
 
     @Test
     public void list() throws Exception {
-        mockMvc.perform(get("/api/objectives"))
+        mockMvc.perform(get("/api/objectives")
+                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.objectives", hasSize(3)));
     }
@@ -122,7 +125,8 @@ public class ObjectiveIntegrationTest {
 
     @Test
     public void findByTitleOrTag() throws Exception{
-        mockMvc.perform(get("/api/objectives/search/findByTitleOrTags?text=boot"))
+        mockMvc.perform(get("/api/objectives/search/findByTitleOrTags?text=boot")
+                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.objectives", hasSize(1)))
                 .andExpect(jsonPath("$._embedded.objectives[0].title",is("Spring Boot")))
