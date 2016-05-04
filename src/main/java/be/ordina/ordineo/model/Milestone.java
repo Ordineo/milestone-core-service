@@ -11,6 +11,8 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by gide on 11/04/16.
@@ -46,5 +48,8 @@ public class Milestone implements Identifiable<Long> {
     private LocalDate endDate;
 
     private String moreInformation;
+
+    @OneToMany(cascade= CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "milestone")
+    private List<Comment> comments;
 
 }

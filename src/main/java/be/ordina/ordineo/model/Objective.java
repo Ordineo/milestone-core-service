@@ -23,10 +23,13 @@ public class Objective implements Identifiable<Long>{
     @NotNull
     @Column(name="title",unique = true)
     private String title;
+
     private String description;
+
     @NotNull
     @Enumerated(EnumType.STRING)
     private ObjectiveType objectiveType;
+
     @ElementCollection(fetch = FetchType.EAGER)
     @Column(name = "tag")
     private List<String> tags = new ArrayList<>();

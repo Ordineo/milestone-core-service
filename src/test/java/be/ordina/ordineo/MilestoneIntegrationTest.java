@@ -1,5 +1,6 @@
 package be.ordina.ordineo;
 
+import be.ordina.ordineo.model.Comment;
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.MilestoneRepository;
@@ -16,12 +17,6 @@ import org.springframework.restdocs.RestDocumentation;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,11 +25,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.Filter;
-import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -88,7 +80,6 @@ public class MilestoneIntegrationTest {
     @Test
     public void getExistingMilestone() throws Exception {
         mockMvc.perform(get("/api/milestones/1")
-                .with(user("admin"))
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOiJbUk9MRV9VU0VSLCBST0xFX0FETUlOXSIsImNyZWF0ZWQiOjE0NjE5MzUzMzkyMzIsImV4cCI6MTQ2MjU0MDEzOX0.hruoNNtj47IU7JkmfEzrlDf3kKGvvw02CPcl4cW_J8ysASn1fQs3Nkz6_5OR8CRT7mTvJSH6sT9LCa964xKHcQ"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("gide")))
@@ -111,14 +102,14 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("moreInformation").description("More information about the milestone"),
-                        fieldWithPath("_links").description("links to resources")
+                        fieldWithPath("_links").description("links to resources"),
+                        fieldWithPath("_embedded.comments").description("The milestone's comments").type(Comment.class)
                 )));
     }
 
     @Test
     public void getExistingMilestoneWithProjection() throws Exception {
         mockMvc.perform(get("/api/milestones/1?projection=milestoneView")
-                .with(user("admin"))
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOiJbUk9MRV9VU0VSXSIsImNyZWF0ZWQiOjE0NjE5MzA2NjMyMDksImV4cCI6MTQ2MjUzNTQ2M30.rx6sQXdx1goaXxcObGkh6Mx5YuEaG2rY6hWL_FiLzAZiXDNO6foi5L9KUFSuSrW0p-iEMWHuR0SkrtNR_plpTw"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("gide")))
@@ -141,6 +132,7 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("moreInformation").description("More information about the milestone"),
+                        fieldWithPath("comments[]").description("The milestones comments"),
                         fieldWithPath("_links").description("links to resources")
                 )));
     }
@@ -148,7 +140,6 @@ public class MilestoneIntegrationTest {
     @Test
     public void getNonExistingMilestoneShouldReturnNotFound() throws Exception {
         mockMvc.perform(get("/api/milestones/999")
-                .with(user("admin"))
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isNotFound());
     }
@@ -156,7 +147,6 @@ public class MilestoneIntegrationTest {
     @Test
     public void list() throws Exception {
         mockMvc.perform(get("/api/milestones")
-                .with(user("admin"))
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.milestones", hasSize(5)));
@@ -165,7 +155,6 @@ public class MilestoneIntegrationTest {
     @Test
     public void findByUsernameOrderByDate() throws Exception {
         mockMvc.perform(get("/api/milestones/search/findByUsername?username=gide")
-                .with(user("admin"))
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOiJbUk9MRV9VU0VSLCBST0xFX0FETUlOXSIsImNyZWF0ZWQiOjE0NjIxNzI4Njk5ODQsImV4cCI6MTQ2Mjc3NzY2OX0.BFpbs12BCKHvju7ICzmzG8_tnfM1AwLGoTF56u3i8ZAR_A56gvivGaL1uKSjkK4HXBcMt_NjAdnFubx-uoSQ8Q"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.milestones", hasSize(2)))
@@ -179,6 +168,7 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("_embedded.milestones[].endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("_embedded.milestones[].moreInformation").description("More information about the milestone"),
                         fieldWithPath("_embedded.milestones[]._links").description("links to other resources"),
+                        fieldWithPath("_embedded.milestones[].comments").description("The milestones comments").type(Comment.class),
                         fieldWithPath("_links").description("links to resources")
                 )));
     }
@@ -196,7 +186,6 @@ public class MilestoneIntegrationTest {
         ConstrainedFields fields = new ConstrainedFields(Milestone.class);
 
         mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON)
-                .with(user("admin"))
                 .with(csrf())
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isCreated())
@@ -223,7 +212,6 @@ public class MilestoneIntegrationTest {
         ConstrainedFields fields = new ConstrainedFields(Milestone.class);
 
         mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON)
-                .with(user("admin"))
                 .with(csrf())
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isBadRequest())
@@ -239,7 +227,6 @@ public class MilestoneIntegrationTest {
         StringBuilder sb = new StringBuilder(string);
         sb.insert(1,"\n  \"objective\" : \"http://localhost:8080/api/objectives/1\",");
         mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(sb.toString()).contentType(MediaTypes.HAL_JSON)
-                .with(user("admin"))
                 .with(csrf())
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isNoContent());
@@ -255,7 +242,6 @@ public class MilestoneIntegrationTest {
         string+=",\n  \"objective\" : \"http://localhost:8080/api/objectives/1\"\n" +
                 "}";
         mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(MediaTypes.HAL_JSON)
-                .with(user("admin"))
                 .with(csrf())
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isBadRequest());
@@ -270,7 +256,6 @@ public class MilestoneIntegrationTest {
         string+=",\n  \"objective\" : null\n" +
                 "}";
         mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(APPLICATION_JSON)
-                .with(user("admin"))
                 .with(csrf())
                 .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
                 .andExpect(status().isBadRequest());

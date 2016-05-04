@@ -310,3 +310,90 @@ include::{snippets}/find-by-title-or-tag/curl-request.adoc[]
 ==== Example response
 
 include::{snippets}/find-by-title-or-tag/http-response.adoc[]
+
+== Comments
+
+[[resources-comment-post]]
+=== Creating a comment
+
+A `POST` request is used to create a comment
+
+==== Request fields
+
+include::{snippets}/post-comment/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/post-comment/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/post-comment/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/post-comment/http-response.adoc[]
+
+[[resources-comment-update]]
+=== Updating a comment
+
+A `PUT` request is used to update a comment
+
+==== Request fields
+
+include::{snippets}/post-comment/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-comment/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-comment/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-comment/http-response.adoc[]
+
+[[resources-comment-update-bad-request]]
+=== Updating a comment with a null value: 400 BAD REQUEST
+
+A `PUT` used to update the comment with a null value will return a 400 BAD REQUEST
+
+==== Request fields
+
+include::{snippets}/post-comment/request-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/update-comment-with-null-value-should-return-bad-request/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/update-comment-with-null-value-should-return-bad-request/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/update-comment-with-null-value-should-return-bad-request/http-response.adoc[]
+
+[[resources-comment-get]]
+=== Requesting a comment
+
+A `GET` request is used to get a comment
+
+===== Response fields
+
+include::{snippets}/get-existing-comment/response-fields.adoc[]
+
+===== Request structure
+
+include::{snippets}/get-existing-comment/http-request.adoc[]
+
+===== Example request
+
+include::{snippets}/get-existing-comment/curl-request.adoc[]
+
+===== Example response
+
+include::{snippets}/get-existing-comment/http-response.adoc[]
+h
