@@ -16,7 +16,9 @@ import java.util.List;
  */
 @RepositoryRestResource(excerptProjection = CommentView.class)
 public interface CommentRepository extends JpaRepository<Comment,Long>{
+
     @RestResource(path="findCommentsByMilestone",rel="findCommentsByMilestone")
     @Query("select c from Comment c where c.milestone = lower(:milestone) order by c.createDate desc")
     List<Comment> findByMilestoneOrderByDate(@Param("milestone") Milestone milestone);
+
 }
