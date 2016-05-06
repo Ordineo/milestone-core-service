@@ -4,6 +4,7 @@ import be.ordina.ordineo.model.Milestone;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * Created by gide on 11/04/16.
@@ -15,6 +16,8 @@ public interface MilestoneView {
 
     ObjectiveView getObjective();
 
+    List<CommentView> getComments();
+
     LocalDate getCreateDate();
 
     LocalDate getDueDate();
@@ -22,5 +25,6 @@ public interface MilestoneView {
     LocalDate getEndDate();
 
     String getMoreInformation();
+
 
 }

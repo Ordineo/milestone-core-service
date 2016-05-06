@@ -1,10 +1,12 @@
 package be.ordina.ordineo;
 
+import be.ordina.ordineo.model.Comment;
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.MilestoneRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -23,6 +25,12 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.Filter;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -32,9 +40,9 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -52,6 +60,8 @@ public class MilestoneIntegrationTest {
     private MockMvc mockMvc;
 
     private ObjectWriter objectWriter;
+    
+    private String authToken;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -62,18 +72,68 @@ public class MilestoneIntegrationTest {
     private WebApplicationContext wac;
     private RestDocumentationResultHandler document;
 
+    @Autowired
+    private Filter springSecurityFilterChain;
+
     @Before
-    public void setup() {
+    public void setup() throws Exception{
         this.document = document("{method-name}");
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https")).alwaysDo(this.document)
+                .addFilter(springSecurityFilterChain)
                 .build();
         objectWriter = objectMapper.writer();
+        
+        authToken = getAuthToken();
     }
+
+
+    public String getAuthToken() throws Exception {
+
+        String url = "https://gateway-ordineo.cfapps.io/auth";
+        URL object = new URL(url);
+
+        HttpURLConnection con = (HttpURLConnection) object.openConnection();
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Accept", "application/json");
+        con.setRequestMethod("POST");
+
+        JSONObject cred = new JSONObject();
+        JSONObject auth = new JSONObject();
+        JSONObject parent = new JSONObject();
+
+        cred.put("username", "Nivek");
+        cred.put("password", "password");
+
+        OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+        wr.write(cred.toString());
+        wr.flush();
+
+        //display what returns the POST request
+
+        StringBuilder sb = new StringBuilder();
+        int HttpResult = con.getResponseCode();
+        if (HttpResult == HttpURLConnection.HTTP_OK) {
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            br.close();
+            return "Bearer " +sb.substring(10,sb.length()-3);
+        } else {
+            return con.getResponseMessage();
+        }
+    }
+
 
     @Test
     public void getExistingMilestone() throws Exception {
-        mockMvc.perform(get("/api/milestones/1"))
+        mockMvc.perform(get("/api/milestones/1")
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("gide")))
                 .andExpect(jsonPath("$.createDate", is("2016-02-01")))
@@ -95,13 +155,15 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("moreInformation").description("More information about the milestone"),
-                        fieldWithPath("_links").description("links to resources")
+                        fieldWithPath("_links").description("links to resources"),
+                        fieldWithPath("_embedded.comments").description("The milestone's comments").type(Comment.class)
                 )));
     }
 
     @Test
     public void getExistingMilestoneWithProjection() throws Exception {
-        mockMvc.perform(get("/api/milestones/1?projection=milestoneView"))
+        mockMvc.perform(get("/api/milestones/1?projection=milestoneView")
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("gide")))
                 .andExpect(jsonPath("$.createDate", is("2016-02-01")))
@@ -123,26 +185,30 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("moreInformation").description("More information about the milestone"),
+                        fieldWithPath("comments[]").description("The milestones comments"),
                         fieldWithPath("_links").description("links to resources")
                 )));
     }
 
     @Test
     public void getNonExistingMilestoneShouldReturnNotFound() throws Exception {
-        mockMvc.perform(get("/api/milestones/999"))
+        mockMvc.perform(get("/api/milestones/999")
+                .header("Authorization", authToken))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     public void list() throws Exception {
-        mockMvc.perform(get("/api/milestones"))
+        mockMvc.perform(get("/api/milestones")
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.milestones", hasSize(5)));
     }
 
     @Test
     public void findByUsernameOrderByDate() throws Exception {
-        mockMvc.perform(get("/api/milestones/search/findByUsername?username=gide"))
+        mockMvc.perform(get("/api/milestones/search/findByUsername?username=gide")
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.milestones", hasSize(2)))
                 .andExpect(jsonPath("$._embedded.milestones[0]._links.self.href", endsWith("/milestones/2")))
@@ -155,6 +221,7 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("_embedded.milestones[].endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("_embedded.milestones[].moreInformation").description("More information about the milestone"),
                         fieldWithPath("_embedded.milestones[]._links").description("links to other resources"),
+                        fieldWithPath("_embedded.milestones[].comments").description("The milestones comments").type(Comment.class),
                         fieldWithPath("_links").description("links to resources")
                 )));
     }
@@ -171,7 +238,9 @@ public class MilestoneIntegrationTest {
                 "}";
         ConstrainedFields fields = new ConstrainedFields(Milestone.class);
 
-        mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON))
+        mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON)
+                .with(csrf())
+                .header("Authorization", authToken))
                 .andExpect(status().isCreated())
                 .andDo(document("{method-name}", requestFields(
                         fields.withPath("username").description("The milestone's unique database identifier"),
@@ -195,7 +264,9 @@ public class MilestoneIntegrationTest {
                 "}";
         ConstrainedFields fields = new ConstrainedFields(Milestone.class);
 
-        mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON))
+        mockMvc.perform(post("/api/milestones").content(string).contentType(MediaTypes.HAL_JSON)
+                .with(csrf())
+                .header("Authorization", authToken))
                 .andExpect(status().isBadRequest())
                 .andReturn().getResponse().getHeader("Location");
     }
@@ -208,7 +279,9 @@ public class MilestoneIntegrationTest {
 
         StringBuilder sb = new StringBuilder(string);
         sb.insert(1,"\n  \"objective\" : \"http://localhost:8080/api/objectives/1\",");
-        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(sb.toString()).contentType(MediaTypes.HAL_JSON))
+        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(sb.toString()).contentType(MediaTypes.HAL_JSON)
+                .with(csrf())
+                .header("Authorization", authToken))
                 .andExpect(status().isNoContent());
     }
 
@@ -221,7 +294,9 @@ public class MilestoneIntegrationTest {
         string = string.substring(0,string.length()-1);
         string+=",\n  \"objective\" : \"http://localhost:8080/api/objectives/1\"\n" +
                 "}";
-        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(MediaTypes.HAL_JSON))
+        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(MediaTypes.HAL_JSON)
+                .with(csrf())
+                .header("Authorization", authToken))
                 .andExpect(status().isBadRequest());
     }
 
@@ -233,7 +308,9 @@ public class MilestoneIntegrationTest {
         string = string.substring(0,string.length()-1);
         string+=",\n  \"objective\" : null\n" +
                 "}";
-        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(APPLICATION_JSON))
+        mockMvc.perform(put("/api/milestones/" +milestone.getId()).content(string).contentType(APPLICATION_JSON)
+                .with(csrf())
+                .header("Authorization", authToken))
                 .andExpect(status().isBadRequest());
     }
 
