@@ -5,6 +5,7 @@ import be.ordina.ordineo.model.ObjectiveType;
 import be.ordina.ordineo.repository.ObjectiveRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,6 +25,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -52,6 +58,8 @@ public class ObjectiveIntegrationTest {
     private MockMvc mockMvc;
 
     private ObjectWriter objectWriter;
+    
+    private String authToken;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -63,18 +71,62 @@ public class ObjectiveIntegrationTest {
     private RestDocumentationResultHandler document;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception{
         this.document = document("{method-name}");
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https")).alwaysDo(this.document)
                 .build();
         objectWriter = objectMapper.writer();
+        
+        authToken = getAuthToken();
     }
+
+    public String getAuthToken() throws Exception {
+
+        String url = "https://gateway-ordineo.cfapps.io/auth";
+        URL object = new URL(url);
+
+        HttpURLConnection con = (HttpURLConnection) object.openConnection();
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setRequestProperty("Accept", "application/json");
+        con.setRequestMethod("POST");
+
+        JSONObject cred = new JSONObject();
+        JSONObject auth = new JSONObject();
+        JSONObject parent = new JSONObject();
+
+        cred.put("username", "Nivek");
+        cred.put("password", "password");
+
+        OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
+        wr.write(cred.toString());
+        wr.flush();
+
+        //display what returns the POST request
+
+        StringBuilder sb = new StringBuilder();
+        int HttpResult = con.getResponseCode();
+        if (HttpResult == HttpURLConnection.HTTP_OK) {
+            BufferedReader br = new BufferedReader(
+                    new InputStreamReader(con.getInputStream(), "utf-8"));
+            String line = null;
+            while ((line = br.readLine()) != null) {
+                sb.append(line + "\n");
+            }
+            br.close();
+            return "Bearer " +sb.substring(10,sb.length()-3);
+        } else {
+            return con.getResponseMessage();
+        }
+    }
+
 
     @Test
     public void getExistingObjective() throws Exception {
         mockMvc.perform(get("/api/objectives/1")
-                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("Spring Boot")))
                 .andExpect(jsonPath("$.description", is("Lorem Ipsum is slechts een proeftekst uit het drukkerij- en zetterijwezen. Lorem Ipsum is de standaard proeftekst in deze bedrijfstak sinds de 16e eeuw, toen een onbekende drukker een zethaak met letters")))
@@ -94,7 +146,7 @@ public class ObjectiveIntegrationTest {
     @Test
     public void getExistingObjectiveWithProjection() throws Exception {
         mockMvc.perform(get("/api/objectives/1?projection=objectiveTitleAndTagsView")
-                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.title", is("Spring Boot")))
                 .andExpect(jsonPath("$.tags[0]", is("java")))
@@ -117,7 +169,7 @@ public class ObjectiveIntegrationTest {
     @Test
     public void list() throws Exception {
         mockMvc.perform(get("/api/objectives")
-                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.objectives", hasSize(3)));
     }
@@ -126,7 +178,7 @@ public class ObjectiveIntegrationTest {
     @Test
     public void findByTitleOrTag() throws Exception{
         mockMvc.perform(get("/api/objectives/search/findByTitleOrTags?text=boot")
-                .header("Authorization", "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJOaXZlayIsInJvbGUiOlt7ImF1dGhvcml0eSI6IlJPTEVfVVNFUiJ9XSwiY3JlYXRlZCI6MTQ2MTkxNzMzMzgyOCwiZXhwIjoxNDYyNTIyMTMzfQ.-hfRSW58Sz6kBE1ZtcGRlfuyqrNvN0nI975iA4bnTBCZIAmj7eJTa2BDsk7JUa5tQtKhLNlFySxLTGbb8MaIIg"))
+                .header("Authorization", authToken))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.objectives", hasSize(1)))
                 .andExpect(jsonPath("$._embedded.objectives[0].title",is("Spring Boot")))
