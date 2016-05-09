@@ -21,7 +21,6 @@ public class DueDateTasklet {
 
     @Scheduled(cron="0 3 * * * *")
     public void execute() throws Exception {
-        System.out.println(milestoneRepository);
         List<Milestone> milestones = milestoneRepository.findAll();
 
         for (Milestone milestone : milestones) {
