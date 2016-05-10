@@ -4,6 +4,7 @@ import be.ordina.ordineo.model.Comment;
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.MilestoneRepository;
+import be.ordina.ordineo.security.JwtFilter;
 import be.ordina.ordineo.util.TestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -25,6 +26,7 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
+import javax.servlet.Filter;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -70,6 +72,7 @@ public class MilestoneIntegrationTest {
         this.document = document("{method-name}");
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https")).alwaysDo(this.document)
+                .addFilter(new JwtFilter(),"/*")
                 .build();
 
         objectWriter = objectMapper.writer();
