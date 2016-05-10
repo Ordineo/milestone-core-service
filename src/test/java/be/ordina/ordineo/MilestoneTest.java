@@ -24,7 +24,7 @@ import java.util.Set;
 import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebIntegrationTest({"eureka.client.enabled:false"})
+//@WebIntegrationTest({"eureka.client.enabled:false"})
 public class MilestoneTest {
 
     private LocalValidatorFactoryBean localValidatorFactory;
