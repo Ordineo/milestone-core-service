@@ -61,6 +61,8 @@ public class SchedulerTest {
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
+    TestUtil util = new TestUtil();
+
     @Before
     public void setup() throws Exception {
         localValidatorFactory = new LocalValidatorFactoryBean();
@@ -68,9 +70,10 @@ public class SchedulerTest {
         localValidatorFactory.afterPropertiesSet();
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
-        milestone = createMilestone();
 
-        //TestUtil.setAuthorities();
+        util.setAuthorities();
+
+        milestone = createMilestone();
     }
 
     @After
