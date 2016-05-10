@@ -4,57 +4,35 @@ import be.ordina.ordineo.model.Comment;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.CommentRepository;
 import be.ordina.ordineo.security.JwtFilter;
+import be.ordina.ordineo.util.TestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
-import com.jayway.jsonpath.JsonPath;
-import org.apache.commons.logging.Log;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.codehaus.jettison.json.JSONException;
-import org.codehaus.jettison.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.hateoas.MediaTypes;
 import org.springframework.restdocs.RestDocumentation;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.time.LocalDate;
-import java.util.Arrays;
 
-import static org.hamcrest.Matchers.endsWith;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertNotNull;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
-import static org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath;
-import static org.springframework.restdocs.payload.PayloadDocumentation.requestFields;
-import static org.springframework.restdocs.payload.PayloadDocumentation.responseFields;
+import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -63,13 +41,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MilestoneCoreApplication.class)
-@WebAppConfiguration
+@WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
 public class CommentIntegrationTest {
     @Autowired
     private CommentRepository commentRepository;
 
     private MockMvc mockMvc;
-    private MockMvc authmock;
 
     private ObjectWriter objectWriter;
 
@@ -84,59 +61,18 @@ public class CommentIntegrationTest {
     private WebApplicationContext wac;
     private RestDocumentationResultHandler document;
 
-
+    TestUtil util = new TestUtil();
 
     @Before
     public void setup() throws Exception {
         this.document = document("{method-name}");
         mockMvc = MockMvcBuilders.webAppContextSetup(wac)
                 .apply(documentationConfiguration(this.restDocumentation).uris().withScheme("https")).alwaysDo(this.document)
-                .addFilter(new JwtFilter(), "/*")
                 .build();
         objectWriter = objectMapper.writer();
 
-        authToken = getAuthToken();
-    }
-
-    public String getAuthToken() throws Exception {
-
-        String url = "https://gateway-ordineo.cfapps.io/auth";
-        URL object = new URL(url);
-
-        HttpURLConnection con = (HttpURLConnection) object.openConnection();
-        con.setDoOutput(true);
-        con.setDoInput(true);
-        con.setRequestProperty("Content-Type", "application/json");
-        con.setRequestProperty("Accept", "application/json");
-        con.setRequestMethod("POST");
-
-        JSONObject cred = new JSONObject();
-        JSONObject auth = new JSONObject();
-        JSONObject parent = new JSONObject();
-
-        cred.put("username", "Nivek");
-        cred.put("password", "password");
-
-        OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());
-        wr.write(cred.toString());
-        wr.flush();
-
-        //display what returns the POST request
-
-        StringBuilder sb = new StringBuilder();
-        int HttpResult = con.getResponseCode();
-        if (HttpResult == HttpURLConnection.HTTP_OK) {
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader(con.getInputStream(), "utf-8"));
-            String line = null;
-            while ((line = br.readLine()) != null) {
-                sb.append(line + "\n");
-            }
-            br.close();
-            return "Bearer " +sb.substring(10,sb.length()-3);
-        } else {
-            return con.getResponseMessage();
-        }
+        authToken = util.getAuthToken();
+        util.setAuthorities();
     }
 
     @Test

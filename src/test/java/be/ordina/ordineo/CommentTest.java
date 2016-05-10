@@ -4,18 +4,37 @@ import be.ordina.ordineo.model.Comment;
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.MilestoneRepository;
+import be.ordina.ordineo.util.TestUtil;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.codehaus.jettison.json.JSONObject;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
@@ -25,7 +44,8 @@ import static org.junit.Assert.assertTrue;
  */
 @ContextConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@Transactional
+@ActiveProfiles("test")
+@WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
 public class CommentTest {
 
     private LocalValidatorFactoryBean localValidatorFactory;
@@ -35,11 +55,16 @@ public class CommentTest {
     @Autowired
     MilestoneRepository milestoneRepository;
 
+    TestUtil util = new TestUtil();
+
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         localValidatorFactory = new LocalValidatorFactoryBean();
         localValidatorFactory.setProviderClass(HibernateValidator.class);
         localValidatorFactory.afterPropertiesSet();
+
+        util.setAuthorities();
+
         comment = createComment();
     }
 
