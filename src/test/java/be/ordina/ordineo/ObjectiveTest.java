@@ -17,8 +17,7 @@ import java.util.Set;
 import static org.junit.Assert.assertTrue;
 
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
-@ActiveProfiles("test")
-
+@ActiveProfiles("cloud")
 public class ObjectiveTest {
 
     private LocalValidatorFactoryBean localValidatorFactory;

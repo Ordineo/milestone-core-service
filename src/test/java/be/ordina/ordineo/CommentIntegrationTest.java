@@ -43,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MilestoneCoreApplication.class)
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
-@ActiveProfiles("test")
+@ActiveProfiles("cloud")
 public class CommentIntegrationTest {
     @Autowired
     private CommentRepository commentRepository;

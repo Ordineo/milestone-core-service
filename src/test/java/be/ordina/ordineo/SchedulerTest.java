@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
 @SpringApplicationConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
-@ActiveProfiles("test")
+@ActiveProfiles("cloud")
 public class SchedulerTest {
 
     @Autowired
