@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Created by gide on 11/04/16.
  */
-//@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
+@PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
 @RepositoryRestResource(excerptProjection = MilestoneView.class)
 public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 

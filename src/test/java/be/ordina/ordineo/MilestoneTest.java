@@ -46,7 +46,6 @@ import java.util.Set;
 import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-@ActiveProfiles("test")
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
 public class MilestoneTest {
 
