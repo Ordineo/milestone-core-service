@@ -3,9 +3,11 @@ package be.ordina.ordineo;
 
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.model.ObjectiveType;
+import be.ordina.ordineo.util.TestUtil;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
@@ -13,6 +15,7 @@ import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
+@WebIntegrationTest({"eureka.client.enabled:false"})
 public class ObjectiveTest {
 
     private LocalValidatorFactoryBean localValidatorFactory;
@@ -20,10 +23,13 @@ public class ObjectiveTest {
     private Objective objective;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         localValidatorFactory = new LocalValidatorFactoryBean();
         localValidatorFactory.setProviderClass(HibernateValidator.class);
         localValidatorFactory.afterPropertiesSet();
+
+        TestUtil.setAuthorities();
+
         objective = createObjective();
     }
 

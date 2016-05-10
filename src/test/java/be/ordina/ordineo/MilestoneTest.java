@@ -1,32 +1,32 @@
 package be.ordina.ordineo;
 
-
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
-import be.ordina.ordineo.model.ObjectiveType;
 import be.ordina.ordineo.repository.MilestoneRepository;
 import be.ordina.ordineo.repository.ObjectiveRepository;
-import org.hibernate.exception.ConstraintViolationException;
+import be.ordina.ordineo.util.TestUtil;
 import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.SpringApplicationConfiguration;
+import org.springframework.boot.test.WebIntegrationTest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
-import java.time.Month;
 import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
-@ContextConfiguration(classes=MilestoneCoreApplication.class)
+
+@SpringApplicationConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
+@WebIntegrationTest({"eureka.client.enabled:false"})
 @Transactional
 public class MilestoneTest {
 
@@ -41,12 +41,14 @@ public class MilestoneTest {
     MilestoneRepository milestoneRepository;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         localValidatorFactory = new LocalValidatorFactoryBean();
         localValidatorFactory.setProviderClass(HibernateValidator.class);
         localValidatorFactory.afterPropertiesSet();
-        milestone = createMilestone();
 
+        TestUtil.setAuthorities();
+
+        milestone = createMilestone();
     }
 
     private Milestone createMilestone(){
