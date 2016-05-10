@@ -28,7 +28,7 @@ public class TestUtil {
         try {
             this.authToken = getToken();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("something went wrong while getting a token");
         }
     }
 

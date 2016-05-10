@@ -23,6 +23,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,7 @@ import static org.junit.Assert.*;
 @SpringApplicationConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
+@ActiveProfiles("test")
 public class SchedulerTest {
 
     @Autowired

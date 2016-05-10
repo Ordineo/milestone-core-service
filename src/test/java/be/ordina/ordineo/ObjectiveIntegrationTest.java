@@ -19,6 +19,7 @@ import org.springframework.restdocs.RestDocumentation;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
@@ -53,6 +54,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MilestoneCoreApplication.class)
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
+@ActiveProfiles("test")
 public class ObjectiveIntegrationTest {
 
     @Autowired

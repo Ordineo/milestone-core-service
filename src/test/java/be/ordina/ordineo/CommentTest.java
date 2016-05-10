@@ -45,6 +45,7 @@ import static org.junit.Assert.assertTrue;
 @ContextConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
+@ActiveProfiles("test")
 public class CommentTest {
 
     private LocalValidatorFactoryBean localValidatorFactory;

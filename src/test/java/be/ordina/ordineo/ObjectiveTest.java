@@ -8,6 +8,7 @@ import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.WebIntegrationTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
@@ -16,6 +17,8 @@ import java.util.Set;
 import static org.junit.Assert.assertTrue;
 
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
+@ActiveProfiles("test")
+
 public class ObjectiveTest {
 
     private LocalValidatorFactoryBean localValidatorFactory;
