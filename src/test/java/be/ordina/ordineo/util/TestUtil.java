@@ -65,6 +65,12 @@ public final class TestUtil {
     }
 
     public static void setAuthorities() throws Exception {
+        if(authToken==null) try {
+            System.out.println("Generating authToken");
+            authToken = getToken();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         final String token = authToken.substring(7);
         Claims claims = Jwts.parser()
                 .setSigningKey("360t00l")
