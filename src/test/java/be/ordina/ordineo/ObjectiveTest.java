@@ -8,7 +8,6 @@ import org.hibernate.validator.HibernateValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.boot.test.WebIntegrationTest;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
@@ -16,15 +15,12 @@ import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
 
-@WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
-@ActiveProfiles("cloud")
+@WebIntegrationTest({"eureka.client.enabled:false"})
 public class ObjectiveTest {
 
     private LocalValidatorFactoryBean localValidatorFactory;
     private Set<ConstraintViolation<Objective>> constraintViolations;
     private Objective objective;
-
-    TestUtil util = new TestUtil();
 
     @Before
     public void setup() throws Exception {
@@ -32,7 +28,7 @@ public class ObjectiveTest {
         localValidatorFactory.setProviderClass(HibernateValidator.class);
         localValidatorFactory.afterPropertiesSet();
 
-        util.setAuthorities();
+        TestUtil.setAuthorities();
 
         objective = createObjective();
     }

@@ -54,7 +54,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MilestoneCoreApplication.class)
 @WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
-@ActiveProfiles("test")
 public class ObjectiveIntegrationTest {
 
     @Autowired
@@ -69,7 +68,6 @@ public class ObjectiveIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    TestUtil util = new TestUtil();
 
     @Rule
     public RestDocumentation restDocumentation = new RestDocumentation("target/generated-snippets");
@@ -85,8 +83,8 @@ public class ObjectiveIntegrationTest {
                 .build();
         objectWriter = objectMapper.writer();
         
-        authToken = util.getAuthToken();
-        util.setAuthorities();
+        authToken = TestUtil.getAuthToken();
+        TestUtil.setAuthorities();
     }
 
     @Test

@@ -3,7 +3,6 @@ package be.ordina.ordineo;
 import be.ordina.ordineo.model.Comment;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.CommentRepository;
-import be.ordina.ordineo.security.JwtFilter;
 import be.ordina.ordineo.util.TestUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -19,7 +18,6 @@ import org.springframework.restdocs.RestDocumentation;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.mockmvc.RestDocumentationResultHandler;
 import org.springframework.restdocs.payload.FieldDescriptor;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -42,8 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = MilestoneCoreApplication.class)
-@WebIntegrationTest({"server.port:0", "eureka.client.enabled:false"})
-@ActiveProfiles("cloud")
+@WebIntegrationTest({"eureka.client.enabled:false"})
 public class CommentIntegrationTest {
     @Autowired
     private CommentRepository commentRepository;
@@ -63,8 +60,6 @@ public class CommentIntegrationTest {
     private WebApplicationContext wac;
     private RestDocumentationResultHandler document;
 
-    TestUtil util = new TestUtil();
-
     @Before
     public void setup() throws Exception {
         this.document = document("{method-name}");
@@ -73,8 +68,8 @@ public class CommentIntegrationTest {
                 .build();
         objectWriter = objectMapper.writer();
 
-        authToken = util.getAuthToken();
-        util.setAuthorities();
+        authToken = TestUtil.getAuthToken();
+        TestUtil.setAuthorities();
     }
 
     @Test

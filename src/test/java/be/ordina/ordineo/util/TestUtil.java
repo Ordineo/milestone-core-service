@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -21,20 +20,12 @@ import java.util.List;
 /**
  * Created by PhDa on 10/05/2016.
  */
-@ActiveProfiles("cloud")
-public class TestUtil {
 
-    String authToken = "";
+public final class TestUtil {
 
-    public TestUtil(){
-        try {
-            this.authToken = getToken();
-        } catch (Exception e) {
-            System.out.println("something went wrong while getting a token");
-        }
-    }
+    static String authToken;
 
-    private String getToken() throws Exception {
+    private static String getToken() throws Exception {
 
         String url = "https://gateway-ordineo.cfapps.io/auth";
         URL object = new URL(url);
@@ -47,8 +38,6 @@ public class TestUtil {
         con.setRequestMethod("POST");
 
         JSONObject cred = new JSONObject();
-        JSONObject auth = new JSONObject();
-        JSONObject parent = new JSONObject();
 
         cred.put("username", "Nivek");
         cred.put("password", "password");
@@ -75,7 +64,7 @@ public class TestUtil {
         }
     }
 
-    public void setAuthorities() throws Exception {
+    public static void setAuthorities() throws Exception {
         final String token = authToken.substring(7);
         Claims claims = Jwts.parser()
                 .setSigningKey("360t00l")
@@ -95,7 +84,13 @@ public class TestUtil {
         SecurityContextHolder.getContext().setAuthentication(authentication);
     }
 
-    public String getAuthToken() {
+    public static String getAuthToken() {
+        if(authToken==null) try {
+            System.out.println("Generating authToken");
+            authToken = getToken();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         return authToken;
     }
 }
