@@ -1,6 +1,5 @@
 package be.ordina.ordineo;
 
-
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.MilestoneRepository;
@@ -27,7 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 @SpringApplicationConfiguration(classes=MilestoneCoreApplication.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-//"@WebIntegrationTest({"eureka.client.enabled:false"})
+@WebIntegrationTest({"eureka.client.enabled:false"})
 @Transactional
 public class MilestoneTest {
 
