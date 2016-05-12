@@ -90,7 +90,7 @@ public class CommentIntegrationTest {
                         fieldWithPath("_embedded.milestone.dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("_embedded.milestone.endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("_embedded.milestone.moreInformation").description("More information about the milestone"),
-                        fieldWithPath("_embedded.milestone.comments[]").description("The embedded milestones comments"),
+                       // fieldWithPath("_embedded.milestone.comments[]").description("The embedded milestones comments"),
                         fieldWithPath("_embedded.milestone._links").description("links to other resources"),
                         fieldWithPath("username").description("The user who posted this comment"),
                         fieldWithPath("message").description("The comment's message"),
