@@ -23,15 +23,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
-
 import java.time.LocalDate;
-
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -90,7 +89,7 @@ public class CommentIntegrationTest {
                         fieldWithPath("_embedded.milestone.dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("_embedded.milestone.endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("_embedded.milestone.moreInformation").description("More information about the milestone"),
-                        fieldWithPath("_embedded.milestone.comments[]").description("The embedded milestones comments"),
+                       // fieldWithPath("_embedded.milestone.comments[]").description("The embedded milestones comments"),
                         fieldWithPath("_embedded.milestone._links").description("links to other resources"),
                         fieldWithPath("username").description("The user who posted this comment"),
                         fieldWithPath("message").description("The comment's message"),
@@ -175,7 +174,26 @@ public class CommentIntegrationTest {
                 .header("Authorization", authToken))
                 .andExpect(status().isBadRequest());
     }
+   @Test
+    public void findByMilestoneOrderByDate()throws Exception{
+        mockMvc.perform(
+                get("/api/comments/search/findCommentsByMilestone?milestone=http://localhost:8080/api/milestones/1")
+                .header("Authorization", authToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.comments[0]._links.self.href", endsWith("/comments/1")))
+               // .andExpect(jsonPath("$._embedded.comments[1]._links.self.href", endsWith("/comments/1")))
+                .andDo(
+                        document("{method-name}", responseFields(
+                        fieldWithPath("_embedded.comments[].username").description("Username"),
+                        fieldWithPath("_embedded.comments[].createDate").description("When the comment was created").type(LocalDate.class),
+                        fieldWithPath("_embedded.comments[].message").description("Test message"),
+                        fieldWithPath("_embedded.comments[]._links").description("links to other resources"),
+                        fieldWithPath("_links").description("links to resources")
+                )));
 
+    }
     private static class ConstrainedFields {
         private final ConstraintDescriptions constraintDescriptions;
 

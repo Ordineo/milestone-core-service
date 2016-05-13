@@ -18,6 +18,8 @@ INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, 
 INSERT INTO comment(id,createdate, message, username, milestone_comment) VALUES (1,'2011-07-11','Test message','PhDa', 1);
 
 
+
+
 -- Test milestone/objective/comment
 INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (100, 1, 'Test', '2017-02-01', '2017-12-31', null, 'extra spring milestone');
 INSERT INTO comment(id,createdate, message, username,milestone_comment) VALUES (100,'2011-07-11','Test message','PhDa',100);
