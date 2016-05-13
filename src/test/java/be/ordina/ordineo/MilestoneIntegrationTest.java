@@ -152,7 +152,7 @@ public class MilestoneIntegrationTest {
         mockMvc.perform(get("/api/milestones")
                 .header("Authorization", authToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.milestones", hasSize(5)));
+                .andExpect(jsonPath("$._embedded.milestones", hasSize(6)));
     }
 
     @Test
