@@ -17,7 +17,7 @@ INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, 
 
 INSERT INTO comment(id,createdate, message, username, milestone_comment) VALUES (1,'2011-07-11','Test message','PhDa', 1);
 
-INSERT INTO milestone_comment(milestone_id,comments_id) VALUES (1,1);
+
 
 
 -- Test milestone/objective/comment
