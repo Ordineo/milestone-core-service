@@ -47,6 +47,7 @@ public class Milestone implements Identifiable<Long> {
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
     private LocalDate endDate;
 
+    @Size(max=5000)
     private String moreInformation;
 
     @OneToMany(cascade= CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "milestone")
