@@ -16,10 +16,11 @@ INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, 
 INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (5, 3, 'Rydg', '2016-02-05', '2016-12-31', '2016-03-01', 'Getting a scrum master certificate');
 
 INSERT INTO comment(id,createdate, message, username, milestone_comment) VALUES (1,'2011-07-11','Test message','PhDa', 1);
-INSERT INTO comment(id,createdate, message, username, milestone_comment) VALUES (2,'2011-07-11','Test message 2','PhDa', 1);
+
 INSERT INTO milestone_comment(milestone_id,comments_id) VALUES (1,1);
+
 
 -- Test milestone/objective/comment
 INSERT INTO milestone(id, objective_id, username, createdate, duedate, enddate, moreinformation) VALUES (100, 1, 'Test', '2017-02-01', '2017-12-31', null, 'extra spring milestone');
 INSERT INTO comment(id,createdate, message, username,milestone_comment) VALUES (100,'2011-07-11','Test message','PhDa',100);
-INSERT INTO milestone_comment(id,milestone_id,comments_id) VALUES (100,100,100);
+
