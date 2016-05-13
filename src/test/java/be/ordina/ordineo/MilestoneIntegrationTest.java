@@ -38,6 +38,7 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -115,6 +116,7 @@ public class MilestoneIntegrationTest {
         mockMvc.perform(get("/api/milestones/1?projection=milestoneView")
                 .header("Authorization", authToken))
                 .andExpect(status().isOk())
+                .andDo(print())
                 .andExpect(jsonPath("$.username", is("gide")))
                 .andExpect(jsonPath("$.createDate", is("2016-02-01")))
                 .andExpect(jsonPath("$.dueDate", is("2016-12-31")))
