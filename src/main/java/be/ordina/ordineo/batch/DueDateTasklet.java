@@ -29,7 +29,7 @@ public class DueDateTasklet {
     @Autowired
     MilestoneRepository milestoneRepository;
 
-    @Scheduled(cron="0/10 * * * * *")
+    @Scheduled(cron="0 3 * * * *")
     public void execute() throws Exception {
         List<Milestone> milestones = milestoneRepository.findAll();
 
