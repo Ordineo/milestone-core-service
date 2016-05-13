@@ -25,8 +25,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
-
-import javax.servlet.Filter;
 import java.time.LocalDate;
 import java.util.Arrays;
 
@@ -135,7 +133,7 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("dueDate").optional().description("When the milestone is due").type(LocalDate.class),
                         fieldWithPath("endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("moreInformation").description("More information about the milestone"),
-                        fieldWithPath("comments[]").description("The milestones comments"),
+                       // fieldWithPath("comments[]").description("The milestones comments"),
                         fieldWithPath("_links").description("links to resources")
                 )));
     }
@@ -171,7 +169,7 @@ public class MilestoneIntegrationTest {
                         fieldWithPath("_embedded.milestones[].endDate").description("When the milestone will end").type(LocalDate.class),
                         fieldWithPath("_embedded.milestones[].moreInformation").description("More information about the milestone"),
                         fieldWithPath("_embedded.milestones[]._links").description("links to other resources"),
-                        fieldWithPath("_embedded.milestones[].comments").description("The milestones comments").type(Comment.class),
+                        //fieldWithPath("_embedded.milestones[].comments").description("The milestones comments").type(Comment.class),
                         fieldWithPath("_links").description("links to resources")
                 )));
     }
