@@ -111,7 +111,7 @@ public class CommentIntegrationTest {
         mockMvc.perform(get("/api/comments")
                 .header("Authorization", authToken))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.comments", hasSize(3)));
+                .andExpect(jsonPath("$._embedded.comments", hasSize(2)));
     }
 
 

@@ -116,7 +116,6 @@ public class MilestoneIntegrationTest {
         mockMvc.perform(get("/api/milestones/1?projection=milestoneView")
                 .header("Authorization", authToken))
                 .andExpect(status().isOk())
-                .andDo(print())
                 .andExpect(jsonPath("$.username", is("gide")))
                 .andExpect(jsonPath("$.createDate", is("2016-02-01")))
                 .andExpect(jsonPath("$.dueDate", is("2016-12-31")))
