@@ -396,4 +396,3 @@ include::{snippets}/get-existing-comment/curl-request.adoc[]
 ===== Example response
 
 include::{snippets}/get-existing-comment/http-response.adoc[]
-h
