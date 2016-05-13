@@ -1,7 +1,6 @@
 package be.ordina.ordineo;
 
 import be.ordina.ordineo.model.Comment;
-import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.CommentRepository;
 import be.ordina.ordineo.util.TestUtil;
@@ -24,10 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
-
 import java.time.LocalDate;
-import java.util.Arrays;
-
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.documentationConfiguration;
@@ -185,16 +181,14 @@ public class CommentIntegrationTest {
                 .header("Authorization", authToken))
                 .andDo(print())
                 .andExpect(status().isOk())
-               // .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
-                .andExpect(jsonPath("$._embedded.comments", hasSize(2)))
-                .andExpect(jsonPath("$._embedded.comments[0]._links.self.href", endsWith("/comments/2")))
-                .andExpect(jsonPath("$._embedded.comments[1]._links.self.href", endsWith("/comments/1")))
+                .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.comments[0]._links.self.href", endsWith("/comments/1")))
+               // .andExpect(jsonPath("$._embedded.comments[1]._links.self.href", endsWith("/comments/1")))
                 .andDo(
                         document("{method-name}", responseFields(
                         fieldWithPath("_embedded.comments[].username").description("Username"),
                         fieldWithPath("_embedded.comments[].createDate").description("When the comment was created").type(LocalDate.class),
                         fieldWithPath("_embedded.comments[].message").description("Test message"),
-
                         fieldWithPath("_embedded.comments[]._links").description("links to other resources"),
                         fieldWithPath("_links").description("links to resources")
                 )));
