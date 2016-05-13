@@ -1,6 +1,7 @@
 package be.ordina.ordineo;
 
 import be.ordina.ordineo.model.Comment;
+import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.Objective;
 import be.ordina.ordineo.repository.CommentRepository;
 import be.ordina.ordineo.util.TestUtil;
@@ -25,6 +26,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 import static org.hamcrest.Matchers.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
@@ -32,6 +34,7 @@ import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.docu
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -175,7 +178,28 @@ public class CommentIntegrationTest {
                 .header("Authorization", authToken))
                 .andExpect(status().isBadRequest());
     }
+   @Test
+    public void findByMilestoneOrderByDate()throws Exception{
+        mockMvc.perform(
+                get("/api/comments/search/findCommentsByMilestone?milestone=http://localhost:8080/api/milestones/1")
+                .header("Authorization", authToken))
+                .andDo(print())
+                .andExpect(status().isOk())
+               // .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
+                .andExpect(jsonPath("$._embedded.comments", hasSize(2)))
+                .andExpect(jsonPath("$._embedded.comments[0]._links.self.href", endsWith("/comments/2")))
+                .andExpect(jsonPath("$._embedded.comments[1]._links.self.href", endsWith("/comments/1")))
+                .andDo(
+                        document("{method-name}", responseFields(
+                        fieldWithPath("_embedded.comments[].username").description("Username"),
+                        fieldWithPath("_embedded.comments[].createDate").description("When the comment was created").type(LocalDate.class),
+                        fieldWithPath("_embedded.comments[].message").description("Test message"),
 
+                        fieldWithPath("_embedded.comments[]._links").description("links to other resources"),
+                        fieldWithPath("_links").description("links to resources")
+                )));
+
+    }
     private static class ConstrainedFields {
         private final ConstraintDescriptions constraintDescriptions;
 

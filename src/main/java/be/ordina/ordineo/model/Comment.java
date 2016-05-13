@@ -31,6 +31,7 @@ public class Comment implements Identifiable<Long> {
     private LocalDate createDate;
 
     @NotNull
+    @Size(min=2 ,max = 142)
     private String message;
 
     @NotNull

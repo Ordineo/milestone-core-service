@@ -3,6 +3,7 @@ package be.ordina.ordineo.repository;
 import be.ordina.ordineo.model.Comment;
 import be.ordina.ordineo.model.Milestone;
 import be.ordina.ordineo.model.projection.CommentView;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
@@ -19,6 +20,6 @@ public interface CommentRepository extends PagingAndSortingRepository<Comment,Lo
 
     @RestResource(path="findCommentsByMilestone",rel="findCommentsByMilestone")
     @Query("select c from Comment c where c.milestone = lower(:milestone) order by c.createDate desc")
-    List<Comment> findByMilestoneOrderByDate(@Param("milestone") Milestone milestone);
+    List<Comment> findByMilestoneOrderByDate(@Param("milestone") Milestone milestone,Pageable pageable);
 
 }
