@@ -63,7 +63,7 @@ use of HTTP status codes.
 
 RESTful milestone uses hypermedia and resources include links to other resources in their
 responses. Responses are in http://stateless.co/hal_specification.html[Hypertext Application
-Language (HAL)] format. Links can be found benath the `_links` key. Users of the API should
+Language (HAL)] format. Links can be found beneath the `_links` key. Users of the API should
 not created URIs themselves, instead they should use the above-described links to navigate
 from resource to resource.
 
@@ -396,4 +396,3 @@ include::{snippets}/get-existing-comment/curl-request.adoc[]
 ===== Example response
 
 include::{snippets}/get-existing-comment/http-response.adoc[]
-h
