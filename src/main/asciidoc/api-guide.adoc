@@ -313,6 +313,48 @@ include::{snippets}/find-by-title-or-tag/http-response.adoc[]
 
 == Comments
 
+[[resources-comment-get]]
+=== Requesting a comment
+
+A `GET` request is used to get a comment
+
+===== Response fields
+
+include::{snippets}/get-existing-comment/response-fields.adoc[]
+
+===== Request structure
+
+include::{snippets}/get-existing-comment/http-request.adoc[]
+
+===== Example request
+
+include::{snippets}/get-existing-comment/curl-request.adoc[]
+
+===== Example response
+
+include::{snippets}/get-existing-comment/http-response.adoc[]
+
+[[resources-comments-byMilestone]]
+=== Listing comments by milestone ordered by date
+
+A `GET` request is used to get a list of comments ordered by dates
+
+==== Response fields
+
+include::{snippets}/find-by-milestone-order-by-date/response-fields.adoc[]
+
+==== Request structure
+
+include::{snippets}/find-by-milestone-order-by-date/http-request.adoc[]
+
+==== Example request
+
+include::{snippets}/find-by-milestone-order-by-date/curl-request.adoc[]
+
+==== Example response
+
+include::{snippets}/find-by-milestone-order-by-date/http-response.adoc[]
+
 [[resources-comment-post]]
 === Creating a comment
 
@@ -376,23 +418,3 @@ include::{snippets}/update-comment-with-null-value-should-return-bad-request/cur
 
 include::{snippets}/update-comment-with-null-value-should-return-bad-request/http-response.adoc[]
 
-[[resources-comment-get]]
-=== Requesting a comment
-
-A `GET` request is used to get a comment
-
-===== Response fields
-
-include::{snippets}/get-existing-comment/response-fields.adoc[]
-
-===== Request structure
-
-include::{snippets}/get-existing-comment/http-request.adoc[]
-
-===== Example request
-
-include::{snippets}/get-existing-comment/curl-request.adoc[]
-
-===== Example response
-
-include::{snippets}/get-existing-comment/http-response.adoc[]
