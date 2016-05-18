@@ -37,10 +37,9 @@ public class DueDateTasklet {
             if(milestone.getEndDate() == null && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now())){
                 log.info("Milestone with id: " + milestone.getId()+" is due in less than 2 weeks");
                 List<String> subscribers = new ArrayList<>();
-                subscribers.add("Nivek");
-                subscribers.add("PhDa");
+                subscribers.add(milestone.getUsername());
                 for (String subscriber : subscribers) {
-                    publishMessage("Testmessage from milestone service",subscriber);
+                    publishMessage("Milestone from "+milestone.getUsername()+" for objective "+ milestone.getObjective().getTitle()+" is going to expire on "+milestone.getDueDate(),subscriber);
                 }
             }else{
                 log.info("we're good!");
@@ -48,8 +47,8 @@ public class DueDateTasklet {
         }
     }
 
-    private void publishMessage(String message,String subscriber)  throws Exception{
-        String url = "http://localhost:1199/api/messages";
+    public void publishMessage(String message,String subscriber)  throws Exception{
+        String url = "https://notification-ordineo.cfapps.io/api/messages";
         URL object = new URL(url);
 
         HttpURLConnection con = (HttpURLConnection) object.openConnection();
