@@ -78,7 +78,7 @@ public class CommentIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.username", is("PhDa")))
                 .andExpect(jsonPath("$.message", is("Test message")))
-                .andExpect(jsonPath("$.createDate", is("2011-07-11")))
+                .andExpect(jsonPath("$.createDate", is("2011-12-03T10:15:30")))
                 .andExpect(jsonPath("$._links.self.href", endsWith("/comments/1")))
                 .andExpect(jsonPath("$._links.milestone.href", endsWith("/milestone")))
                 .andExpect(jsonPath("$._embedded.milestone._links.self.href", endsWith("/milestones/1{?projection}")))
@@ -118,7 +118,7 @@ public class CommentIntegrationTest {
     public void postComment() throws Exception {
         String string = "{\n" +
                 "  \"username\": \"PhDa\",\n" +
-                "  \"createDate\": \"2016-02-01\",\n" +
+                "  \"createDate\": \"2011-12-03T10:15:30\",\n" +
                 "  \"message\": \"test\",\n" +
                 "  \"milestone\" : \"http://localhost:8080/api/milestone/1\"\n" +
                 "}";
