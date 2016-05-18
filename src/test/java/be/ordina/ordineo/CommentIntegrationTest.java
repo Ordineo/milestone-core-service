@@ -179,7 +179,6 @@ public class CommentIntegrationTest {
         mockMvc.perform(
                 get("/api/comments/search/findCommentsByMilestone?milestone=http://localhost:8080/api/milestones/1")
                 .header("Authorization", authToken))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$._embedded.comments", hasSize(1)))
                 .andExpect(jsonPath("$._embedded.comments[0]._links.self.href", endsWith("/comments/1")))
