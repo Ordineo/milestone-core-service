@@ -120,7 +120,7 @@ public class CommentIntegrationTest {
                 "  \"username\": \"PhDa\",\n" +
                 "  \"createDate\": \"2011-12-03T10:15:30\",\n" +
                 "  \"message\": \"test\",\n" +
-                "  \"milestone\" : \"http://localhost:8080/api/milestone/1\"\n" +
+                "  \"milestone\" : \"http://localhost:8080/api/milestones/1\"\n" +
                 "}";
 
         CommentIntegrationTest.ConstrainedFields fields = new CommentIntegrationTest.ConstrainedFields(Comment.class);
