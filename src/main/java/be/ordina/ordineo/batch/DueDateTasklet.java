@@ -34,12 +34,12 @@ public class DueDateTasklet {
         List<Milestone> milestones = milestoneRepository.findAll();
 
         for (Milestone milestone : milestones) {
-            if(milestone.getEndDate() == null && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now())){
-                log.info("Milestone with id: " + milestone.getId()+" is due in less than 2 weeks");
+            if(milestone.getEndDate() == null && ((milestone.getDueDate().minusWeeks(2)).isEqual(LocalDate.now()) || (milestone.getDueDate().minusWeeks(1)).isEqual(LocalDate.now()) || (milestone.getDueDate().minusDays(1)).isEqual(LocalDate.now()))){
+                log.info("Milestone with id: " + milestone.getId()+" is due soon");
                 List<String> subscribers = new ArrayList<>();
                 subscribers.add(milestone.getUsername());
                 for (String subscriber : subscribers) {
-                    publishMessage("Milestone from "+milestone.getUsername()+" for objective "+ milestone.getObjective().getTitle()+" is going to expire on "+milestone.getDueDate(),subscriber);
+                    publishMessage("Milestone from "+milestone.getUsername()+" for objective "+ milestone.getObjective().getTitle()+" is going to expire on "+milestone.getDueDate(),subscriber,"milestone");
                 }
             }else{
                 log.info("we're good!");
@@ -47,7 +47,7 @@ public class DueDateTasklet {
         }
     }
 
-    public void publishMessage(String message,String subscriber)  throws Exception{
+    public void publishMessage(String message,String subscriber,String messageType)  throws Exception{
         String url = "https://notification-ordineo.cfapps.io/api/messages";
         URL object = new URL(url);
 
@@ -62,6 +62,7 @@ public class DueDateTasklet {
 
         body.put("message", message);
         body.put("subscriber", subscriber);
+        body.put("messageType", messageType);
 
 
         OutputStreamWriter wr = null;
