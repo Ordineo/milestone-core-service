@@ -32,7 +32,7 @@ public class Comment implements Identifiable<Long> {
     private LocalDateTime createDate;
 
     @NotNull
-    @Size(min=2 ,max = 142)
+    @Size(min=1 ,max = 142)
     private String message;
 
     @NotNull
