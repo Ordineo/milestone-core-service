@@ -39,7 +39,7 @@ public final class TestUtil {
 
         JSONObject cred = new JSONObject();
 
-        cred.put("username", "Nivek");
+        cred.put("username", "RyDg");// for test i have to change it back to
         cred.put("password", "password");
 
         OutputStreamWriter wr = new OutputStreamWriter(con.getOutputStream());

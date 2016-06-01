@@ -172,11 +172,11 @@
             <version>${jjwt.version}</version>
         </dependency>
 
-        <dependency>
+       <!-- <dependency>
             <groupId>com.nimbusds</groupId>
             <artifactId>nimbus-jose-jwt</artifactId>
             <version>4.15</version>
-        </dependency>
+        </dependency>-->
         <!-- testing -->
         <dependency>
             <groupId>org.springframework</groupId>

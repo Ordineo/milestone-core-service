@@ -16,9 +16,9 @@ import java.util.List;
  */
 
 @RepositoryRestResource(excerptProjection = MilestoneView.class)
+//@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
 public interface MilestoneRepository extends JpaRepository<Milestone, Long> {
 
-    @PreAuthorize("hasRole('ROLE_USER') or hasRole('ROLE_ADMIN')")
     @RestResource(path="findByUsername",rel="findByUsername")
     @Query("select m from Milestone m where lower(m.username) = lower(:username) order by (CASE WHEN (m.endDate != null) THEN m.endDate ELSE m.dueDate END) desc")
     List<Milestone> findByUsernameOrderByDate(@Param("username") String username);

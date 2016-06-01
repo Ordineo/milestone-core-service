@@ -47,7 +47,7 @@ public class JwtFilter extends GenericFilterBean {
             String s = (String)claims.get("role");
             //String s = request.getHeader("roles");
             s = s.replace("[", "").replace("]", "");
-            String[] split = s.split(",");
+            String[] split = s.split(", ");
             for (String string : split) {
                 authorities.add(new SimpleGrantedAuthority(string));
             }
