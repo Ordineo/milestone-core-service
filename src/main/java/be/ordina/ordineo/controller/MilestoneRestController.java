@@ -50,7 +50,7 @@ public class MilestoneRestController {
    // public ResponseEntity<PersistentEntityResource> requestMilestone(@PathVariable Long id,
                                                                      //PersistentEntityResourceAssembler persistentEntityResourceAssembler){
 
-        public ResponseEntity<Milestone> requestMilestone(@PathVariable Long id){
+        public ResponseEntity<Object> requestMilestone(@PathVariable Long id){
 
         log.info("inside http get method");
         Milestone milestone = milestoneRepository.findOne(id);
@@ -58,8 +58,11 @@ public class MilestoneRestController {
         if(milestone == null){
             throw new EntityNotFoundException("Milestone not Found!");
         }
-        return new ResponseEntity<Milestone>(milestone,HttpStatus.OK);// this should be made based on REst doc
-        //return ok(persistentEntityResourceAssembler.toResource(milestone));
+        Resource rs = new Resource(milestone);
+        rs.add((linkTo(methodOn(MilestoneRestController.class).requestMilestone(id)).withSelfRel()));
+        return new ResponseEntity<Object>(rs, HttpStatus.OK);// this should be made based on REst doc
+
+
 
     }
 
@@ -70,7 +73,7 @@ public class MilestoneRestController {
        // ,PersistentEntityResourceAssembler persistentEntityResourceAssembler) {
        log.info("id of object which should be modified :" + id);
 
-            Validate.notNull(milestone.getUsername());
+            Validate.notEmpty(milestone.getUsername());
             Milestone originalMilestone = milestoneRepository.findOne(id);//original Object
             Validate.notNull(originalMilestone);
 
@@ -90,16 +93,20 @@ public class MilestoneRestController {
     }
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @RequestMapping(value="/",method = RequestMethod.POST)//     /api/milestones
-    public ResponseEntity createMilestone(@RequestBody @Valid Milestone milestone){
+    public ResponseEntity createMilestone(@RequestBody @Valid Milestone milestone,HttpServletRequest request) throws URISyntaxException {
 
         log.info("id of object which should be created :" + milestone);
         Validate.notEmpty(milestone.getUsername());
         if(checkAuthorizationOfAuthenticatedUser(milestone.getUsername())){
             milestone = milestoneRepository.save(milestone);
-            return new ResponseEntity( HttpStatus.CREATED);
-           // return persistentEntityResourceAssembler.toResource(milestone);
+            URI uri = null;
+            HttpHeaders httpHeaders = new HttpHeaders();
+            uri = new URI(request.getRequestURL().append(milestone.getId()).toString());
+            httpHeaders.setLocation(uri);
+            return new ResponseEntity( httpHeaders,HttpStatus.CREATED);
+
         }
-        return new ResponseEntity(HttpStatus.FORBIDDEN);// is it enough or needs exception?????
+        throw new AccessDeniedException("Access Forbidden!");
 
     }
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
@@ -124,11 +131,6 @@ public class MilestoneRestController {
 
         return new ResponseEntity<>(resources,HttpStatus.OK);
     }
-
-
-
-
-
 
     private boolean checkAuthorizationOfAuthenticatedUser(String userName){
         boolean userIsTheOwner = false;
