@@ -30,30 +30,30 @@ public class DueDateTasklet {
     MilestoneRepository milestoneRepository;
 
     //Run every night at 3 am
-    @Scheduled(cron="0 0 3 * * *")
+    @Scheduled(cron = "0 0 3 * * *")
     public void execute() throws Exception {
         List<Milestone> milestones = milestoneRepository.findAll();
 
         for (Milestone milestone : milestones) {
-            if(milestone.getEndDate() == null
+            if (milestone.getEndDate() == null
                     && milestone.getDueDate().isAfter(LocalDate.now())
-                    && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now())){
+                    && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now())) {
 
-                log.info(LocalDate.now()+ ": Milestone with id: " + milestone.getId() + " is due in less than 2 weeks");
+                log.info(LocalDate.now() + ": Milestone with id: " + milestone.getId() + " is due in less than 2 weeks");
                 List<String> subscribers = new ArrayList<>();
                 subscribers.add(milestone.getUsername());
                 for (String subscriber : subscribers) {
-                    String message = "Milestone from " + milestone.getUsername()+ " for objective " + milestone.getObjective().getTitle()+" is going to expire on "+milestone.getDueDate();
+                    String message = "Milestone from " + milestone.getUsername() + " for objective " + milestone.getObjective().getTitle() + " is going to expire on " + milestone.getDueDate();
                     String messageType = "duedate"; //TODO
-                    publishMessage(message,subscriber, messageType);
+                    publishMessage(message, subscriber, messageType);
                 }
-            }else{
+            } else {
                 log.info("we're good!");
             }
         }
     }
 
-    private void publishMessage(String message,String subscriber, String messageType)  throws Exception{
+    private void publishMessage(String message, String subscriber, String messageType) throws Exception {
         String url = "http://localhost:1199/api/messages"; //TODO: url
         URL object = new URL(url);
 
