@@ -9,6 +9,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Created by PhDa on 26/04/2016.
@@ -28,10 +29,10 @@ public class Comment implements Identifiable<Long> {
 
     @NotNull
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    private LocalDate createDate;
+    private LocalDateTime createDate;
 
     @NotNull
-    @Size(min=2 ,max = 142)
+    @Size(min=1 ,max = 142)
     private String message;
 
     @NotNull

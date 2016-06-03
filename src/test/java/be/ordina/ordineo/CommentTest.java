@@ -16,6 +16,7 @@ import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.validation.ConstraintViolation;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.junit.Assert.assertTrue;
@@ -51,7 +52,7 @@ public class CommentTest {
         Milestone milestone = milestoneRepository.findByUsernameOrderByDate("gide").get(0);
 
         comment.setUsername("PhDa");
-        comment.setCreateDate(LocalDate.now());
+        comment.setCreateDate(LocalDateTime.now());
         comment.setMessage("New TestMessage");
         comment.setMilestone(milestone);
 
@@ -105,7 +106,7 @@ public class CommentTest {
                 );
         constraintViolations = localValidatorFactory
                 .validate(comment);
-        assertTrue(constraintViolations.stream().filter(m -> m.getMessage().equals("size must be between 2 and 142")).count() > 0);
+        assertTrue(constraintViolations.stream().filter(m -> m.getMessage().equals("size must be between 1 and 142")).count() > 0);
     }
 
     @Test

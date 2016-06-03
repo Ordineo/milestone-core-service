@@ -4,6 +4,7 @@ import be.ordina.ordineo.model.Comment;
 import org.springframework.data.rest.core.config.Projection;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  * Created by PhDa on 26/04/2016.
@@ -15,6 +16,6 @@ public interface CommentView {
 
     String getMessage();
 
-    LocalDate getCreateDate();
+    LocalDateTime getCreateDate();
 
 }
