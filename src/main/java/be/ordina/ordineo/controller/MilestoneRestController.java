@@ -9,19 +9,24 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.PersistentEntityResource;
 import org.springframework.data.rest.webmvc.PersistentEntityResourceAssembler;
 import org.springframework.data.rest.webmvc.RepositoryRestController;
+import org.springframework.hateoas.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
+import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
 import static org.springframework.http.ResponseEntity.ok;
 
 /**
@@ -60,11 +65,11 @@ public class MilestoneRestController {
 
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @RequestMapping(value="/{id}",method = RequestMethod.PUT)
-    public ResponseEntity UpdateMilestone(@PathVariable Long id,@RequestBody Milestone milestone,HttpServletRequest request) {
+    public ResponseEntity UpdateMilestone(@PathVariable Long id,@RequestBody @Valid Milestone milestone,HttpServletRequest request) throws URISyntaxException {
    // public PersistentEntityResource UpdateMilestone(@PathVariable Long id,@RequestBody Milestone milestone,HttpServletRequest request
        // ,PersistentEntityResourceAssembler persistentEntityResourceAssembler) {
        log.info("id of object which should be modified :" + id);
-        try {
+
             Validate.notNull(milestone.getUsername());
             Milestone originalMilestone = milestoneRepository.findOne(id);//original Object
             Validate.notNull(originalMilestone);
@@ -72,67 +77,53 @@ public class MilestoneRestController {
             if (checkAuthorizationOfAuthenticatedUser(originalMilestone.getUsername())) {
                 milestone.setId(originalMilestone.getId());
                 milestone = milestoneRepository.save(milestone);
-
-
-
-               HttpHeaders httpHeaders = new HttpHeaders();
-               log.info("----------------------   "+ request.getRequestURI());
-                log.info("----------------------   "+ request.getRequestURL());
-
+                HttpHeaders httpHeaders = new HttpHeaders();
                 URI uri = new URI(request.getRequestURL().toString());
-
-
                 httpHeaders.setLocation(uri);
 
                 return new ResponseEntity(null,httpHeaders,HttpStatus.NO_CONTENT);
-               // return  persistentEntityResourceAssembler.toResource(milestone);*/
-               // return persistentEntityResourceAssembler.toResource(milestone);
             }
-        }catch(IllegalArgumentException ex) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();// what should i put here???????
-        }
-        return new ResponseEntity(HttpStatus.FORBIDDEN);// is it enough or needs exception?????*/
 
-        //return null;
+        throw new AccessDeniedException("Access Forbidden!");
+
+
     }
     @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @RequestMapping(value="/",method = RequestMethod.POST)//     /api/milestones
-    public ResponseEntity createMilestone(@RequestBody Milestone milestone){
-   // public PersistentEntityResource createMilestone(@RequestBody Milestone milestone,
-                                                  // PersistentEntityResourceAssembler persistentEntityResourceAssembler ){
+    public ResponseEntity createMilestone(@RequestBody @Valid Milestone milestone){
+
         log.info("id of object which should be created :" + milestone);
-        Validate.notNull(milestone);
+        Validate.notEmpty(milestone.getUsername());
         if(checkAuthorizationOfAuthenticatedUser(milestone.getUsername())){
             milestone = milestoneRepository.save(milestone);
             return new ResponseEntity( HttpStatus.CREATED);
            // return persistentEntityResourceAssembler.toResource(milestone);
         }
         return new ResponseEntity(HttpStatus.FORBIDDEN);// is it enough or needs exception?????
-        //return null;
+
     }
-  /*  @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @RequestMapping(value="/{id}",method = RequestMethod.DELETE)// for now Delete is not allowed
     public ResponseEntity deleteMilestone(){
 
         return new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
-    }*/
+    }
 
-    /*@PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-    @RequestMapping(value="/api/milestones/{id}",method = RequestMethod.GET)
-    public void milestoneView(@PathVariable String userName){
-        List<Milestone> milestones = milestoneRepository.findByUsernameOrderByDate(userName);
-        if()
-    }*/
-   /* @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")//search/findByUsername?{userName}{value}
-    @RequestMapping(value="/search/findByUsername?username={username}",method = RequestMethod.GET)// /search/findByUsername?{userName}{value}
-    public ResponseEntity<List<Milestone>> milestoneView(@PathVariable String username){
-        log.info("----------------------------  :> "+username );
-       // List<Milestone> milestones = milestoneRepository.findByUsernameOrderByDate(userName);
-       // return new ResponseEntity<>(milestones,HttpStatus.OK); // i should make the json format
-        return new ResponseEntity<>(HttpStatus.OK);
-    }*/
+
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
+    @RequestMapping(value="/search/findByUsername", params = {"username"}, method = RequestMethod.GET)
+    public ResponseEntity<Object> findByUsernameOrderByDate(@RequestParam(value = "username") @Valid String  username){
+        log.info("inside method get findbname");
+        List<Milestone> milestones = milestoneRepository.findByUsernameOrderByDate(username);
+        List<Resource> resources = new ArrayList<>();
+        for(Milestone ms: milestones){
+            Resource rs = new Resource(ms);
+            rs.add((linkTo(methodOn(MilestoneRestController.class).findByUsernameOrderByDate(username)).withSelfRel()));
+            resources.add(rs);
+        }
+
+        return new ResponseEntity<>(resources,HttpStatus.OK);
+    }
 
 
 

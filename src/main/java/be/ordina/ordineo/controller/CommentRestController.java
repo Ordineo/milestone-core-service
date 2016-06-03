@@ -97,14 +97,15 @@ public class CommentRestController {
     public ResponseEntity deleteCommesnt(){
         return new ResponseEntity(HttpStatus.METHOD_NOT_ALLOWED);
     }
+
    @RequestMapping(value="/search/findCommentsByMilestone", params = {"milestone"},method = RequestMethod.GET)//produces = "application/hal+json"
-   public ResponseEntity findCommentsByMilestone(@RequestParam(value = "milestone") Milestone milestone){
+   public ResponseEntity findCommentsByMilestone(@RequestParam(value = "milestone") @Valid Milestone milestone){
 
         log.info("Inside Find comments By Milestone");
 
-       // Validate.notNull(milestone);
+       //Validate.notNull(milestone);
        // commentRepository.findByMilestoneOrderByDate(milestone,null);// Todo :check giving pageable null will return one page by default?????
-      //  List<Comment> comments = commentRepository.findByMilestoneOrderByDate(milestone,);
+       // List<Comment> comments = commentRepository.findByMilestoneOrderByDate(milestone,);
 
        // return new ResponseEntity(comments,HttpStatus.OK);
        return null;

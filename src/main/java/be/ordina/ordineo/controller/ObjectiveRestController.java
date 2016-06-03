@@ -84,28 +84,18 @@ public class ObjectiveRestController {
     // authorization for custom methods
    @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
     @RequestMapping(value="/search/findByTitleOrTags", params = {"text"}, method=RequestMethod.GET)
-    public ResponseEntity<List<Objective>> findByTitleOrTags(@RequestParam(value = "text") String text ){
+    public ResponseEntity<Object> findByTitleOrTags(@RequestParam(value = "text") String text ){
        log.info("inside mehtod Get for Objective find by Title");
        Validate.notEmpty(text);
+       Validate.notNull(text);
        List<Objective> objectives = new ArrayList<Objective>();
        objectives = objectiveRepository.findByTitleOrTags(text);
-       //ResponseEntity<List<Objective>> list = new ResponseEntity<List<Objective>>();
-      /* for(Objective ob:objectives){
+       List<Resource> resources = new ArrayList<>();
+       for(Objective ob:objectives){
            Resource rs = new Resource(ob);
            rs.add((linkTo(methodOn(ObjectiveRestController.class).findByTitleOrTags(text)).withSelfRel()));
-           list.add
-       }*/
-       //ResponseEntity<List<Objective>> objectives = findByTitleOrTags(text);
-      // for(Objective ob : objectives)
-
-
-        return null;
+           resources.add(rs);
+       }
+       return new ResponseEntity<Object>(resources,HttpStatus.OK);
     }
-   /*  @PreAuthorize("hasAnyRole('ROLE_ADMIN','ROLE_USER')")
-  @RequestMapping(value="/{id}*" , method=RequestMethod.GET)
-     public  ResponseEntity findByTitleOrTags(@PathVariable Long id ,HttpServletRequest httpServletRequest){
-        log.info("sfdfsfsdfsdfdsfdsf");
-         httpServletRequest.getRequestURI()
-        return null;
-    }*/
 }
