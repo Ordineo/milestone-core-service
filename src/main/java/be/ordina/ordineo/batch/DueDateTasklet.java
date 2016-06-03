@@ -29,17 +29,23 @@ public class DueDateTasklet {
     @Autowired
     MilestoneRepository milestoneRepository;
 
-    @Scheduled(cron="0 3 * * * *")
+    //Run every night at 3 am
+    @Scheduled(cron="0 0 3 * * *")
     public void execute() throws Exception {
         List<Milestone> milestones = milestoneRepository.findAll();
 
         for (Milestone milestone : milestones) {
-            if(milestone.getEndDate() == null && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now())){
-                log.info("Milestone with id: " + milestone.getId()+" is due in less than 2 weeks");
+            if(milestone.getEndDate() == null
+                    && milestone.getDueDate().isAfter(LocalDate.now())
+                    && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now())){
+
+                log.info(LocalDate.now()+ ": Milestone with id: " + milestone.getId() + " is due in less than 2 weeks");
                 List<String> subscribers = new ArrayList<>();
                 subscribers.add(milestone.getUsername());
                 for (String subscriber : subscribers) {
-                    publishMessage("Milestone from "+milestone.getUsername()+" for objective "+ milestone.getObjective().getTitle()+" is going to expire on "+milestone.getDueDate(),subscriber);
+                    String message = "Milestone from " + milestone.getUsername()+ " for objective " + milestone.getObjective().getTitle()+" is going to expire on "+milestone.getDueDate();
+                    String messageType = "duedate"; //TODO
+                    publishMessage(message,subscriber, messageType);
                 }
             }else{
                 log.info("we're good!");
@@ -47,8 +53,8 @@ public class DueDateTasklet {
         }
     }
 
-    public void publishMessage(String message,String subscriber)  throws Exception{
-        String url = "https://notification-ordineo.cfapps.io/api/messages";
+    private void publishMessage(String message,String subscriber, String messageType)  throws Exception{
+        String url = "http://localhost:1199/api/messages"; //TODO: url
         URL object = new URL(url);
 
         HttpURLConnection con = (HttpURLConnection) object.openConnection();
@@ -62,6 +68,7 @@ public class DueDateTasklet {
 
         body.put("message", message);
         body.put("subscriber", subscriber);
+        body.put("messageType", messageType);
 
 
         OutputStreamWriter wr = null;
