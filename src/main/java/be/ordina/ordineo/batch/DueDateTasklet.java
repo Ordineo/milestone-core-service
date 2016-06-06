@@ -15,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,6 +50,26 @@ public class DueDateTasklet {
                 log.info("we're good!");
             }
         }
+    }
+
+    private boolean milestoneDue(Milestone milestone, ChronoLocalDate due) {
+        return milestone.getEndDate() == null
+                && milestone.getDueDate().isEqual(due);
+    }
+
+    private boolean milestoneDueTomorrow(Milestone milestone) {
+        return milestone.getEndDate() == null
+                && milestone.getDueDate().isEqual(LocalDate.now().plusDays(1));
+    }
+
+    private boolean milestoneDueInTwoWeeks(Milestone milestone) {
+        return milestone.getEndDate() == null
+                && milestone.getDueDate().isEqual(LocalDate.now().plusWeeks(2));
+    }
+
+    private boolean milestoneDueInOneWeek(Milestone milestone) {
+        return milestone.getEndDate() == null
+                && milestone.getDueDate().isEqual(LocalDate.now().plusWeeks(1));
     }
 
     private boolean milestoneNotCompletedDueBetweenNowAnd2Weeks(Milestone milestone) {
