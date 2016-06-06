@@ -35,9 +35,7 @@ public class DueDateTasklet {
         List<Milestone> milestones = milestoneRepository.findAll();
 
         for (Milestone milestone : milestones) {
-            if (milestone.getEndDate() == null
-                    && milestone.getDueDate().isAfter(LocalDate.now())
-                    && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now())) {
+            if (milestoneNotCompletedDueBetweenNowAnd2Weeks(milestone)) {
 
                 log.info(LocalDate.now() + ": Milestone with id: " + milestone.getId() + " is due in less than 2 weeks");
                 List<String> subscribers = new ArrayList<>();
@@ -51,6 +49,12 @@ public class DueDateTasklet {
                 log.info("we're good!");
             }
         }
+    }
+
+    private boolean milestoneNotCompletedDueBetweenNowAnd2Weeks(Milestone milestone) {
+        return milestone.getEndDate() == null
+                && milestone.getDueDate().isAfter(LocalDate.now())
+                && (milestone.getDueDate().minusWeeks(2)).isBefore(LocalDate.now());
     }
 
     private void publishMessage(String message, String subscriber, String messageType) throws Exception {
