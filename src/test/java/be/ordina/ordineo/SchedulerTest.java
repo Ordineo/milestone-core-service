@@ -36,6 +36,6 @@ public class SchedulerTest {
         DueDateTasklet spytasklet = spy(dueDateTasklet);
         spytasklet.execute();
         verify(spytasklet).execute();
-        verify(spytasklet).publishMessage(anyString(),anyString());
+        verify(spytasklet).publishMessage(anyString(),anyString(), anyString());
     }
 }
