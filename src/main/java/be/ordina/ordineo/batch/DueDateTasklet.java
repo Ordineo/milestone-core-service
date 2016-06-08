@@ -71,7 +71,7 @@ public class DueDateTasklet {
         return milestoneDue(milestone, LocalDate.now().plusWeeks(1));
     }
 
-    private void publishMessage(String message, String subscriber, String messageType) throws Exception {
+    public void publishMessage(String message, String subscriber, String messageType) throws Exception {
         String url = "http://localhost:1199/api/messages"; //TODO: url
         URL object = new URL(url);
 
@@ -83,11 +83,9 @@ public class DueDateTasklet {
         con.setRequestMethod("POST");
 
         JSONObject body = new JSONObject();
-
         body.put("message", message);
         body.put("subscriber", subscriber);
         body.put("messageType", messageType);
-
 
         OutputStreamWriter wr = null;
         try {
@@ -118,5 +116,4 @@ public class DueDateTasklet {
             log.error("Can't access notification service.");
         }
     }
-
 }
